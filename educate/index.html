@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathématique 4e année</title>
+<style>
+  :root{
+    --paper:#FBF6EC;
+    --ink:#26363F;
+    --teal:#2C7A73;
+    --teal-dark:#1D5A54;
+    --coral:#E8603C;
+    --gold:#E3A72E;
+    --plum:#6B4FA3;
+    --line:#D9CFB8;
+    --wrong:#C4453A;
+    --accent:#2C7A73;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(44,122,115,0.07), transparent 40%),
+      radial-gradient(circle at 92% 85%, rgba(232,96,60,0.08), transparent 40%),
+      var(--paper);
+    font-family:-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:28px 16px 60px;
+  }
+  .sheet{ width:100%; max-width:640px; }
+
+  .header{
+    border-bottom:3px solid var(--ink);
+    padding-bottom:14px;
+    margin-bottom:22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10px;
+  }
+  .header h1{ font-size:1.45rem; margin:0 0 4px; letter-spacing:-0.01em; }
+  .header p{
+    margin:0;
+    font-family:'Courier New', Consolas, monospace;
+    font-size:0.78rem;
+    color:var(--teal-dark);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .badge{
+    font-family:'Courier New', Consolas, monospace;
+    font-size:0.72rem;
+    background:var(--ink);
+    color:var(--paper);
+    padding:6px 10px;
+    border-radius:4px;
+    white-space:nowrap;
+  }
+
+  /* Menu */
+  .menu-intro{ margin:0 0 6px; line-height:1.5; font-size:1.02rem; }
+  .daydate{
+    margin:0 0 18px; font-family:'Courier New', Consolas, monospace; font-size:0.85rem;
+    color:var(--coral); font-weight:700;
+  }
+  .menu{ display:grid; gap:14px; }
+  .mcard{
+    all:unset;
+    box-sizing:border-box;
+    cursor:pointer;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    background:#fff;
+    border:2px solid var(--ink);
+    border-left:10px solid var(--accent);
+    border-radius:12px;
+    padding:16px 16px;
+    box-shadow:4px 4px 0 rgba(38,54,63,0.12);
+    transition:transform .08s ease;
+  }
+  .mcard:hover{ transform:translate(-1px,-1px); }
+  .mcard:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .micon{
+    font-size:1.9rem; width:48px; height:48px; border-radius:50%;
+    background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center;
+    flex:none; font-weight:700;
+  }
+  .mtitle{ font-weight:700; font-size:1.1rem; }
+  .mdesc{ font-size:0.9rem; color:#5C5646; margin-top:2px; }
+  .mscore{ font-family:'Courier New', Consolas, monospace; font-size:0.78rem; color:var(--teal-dark); margin-top:4px; }
+
+  /* Progress */
+  .trail{ display:flex; gap:6px; margin-bottom:24px; }
+  .dot{ flex:1; height:8px; border-radius:4px; background:var(--line); }
+  .dot.done{ background:var(--accent); }
+  .dot.current{ background:var(--gold); }
+
+  /* Card */
+  .card{
+    background:#fff;
+    border:2px solid var(--ink);
+    border-radius:14px;
+    box-shadow:6px 6px 0 rgba(38,54,63,0.12);
+    padding:28px 24px;
+  }
+  .qnum{
+    font-family:'Courier New', Consolas, monospace;
+    font-size:0.85rem;
+    color:var(--coral);
+    font-weight:700;
+    letter-spacing:0.04em;
+    margin-bottom:10px;
+  }
+  .qtext{ font-size:1.15rem; line-height:1.6; margin:0 0 20px; }
+  .visual{ display:flex; justify-content:center; margin:0 0 18px; }
+
+  .answer-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  input[type="text"]{
+    flex:1; min-width:150px;
+    font-family:'Courier New', Consolas, monospace;
+    font-size:1.05rem;
+    padding:12px 14px;
+    border:2px solid var(--ink);
+    border-radius:8px;
+    background:var(--paper);
+    color:var(--ink);
+    outline:none;
+  }
+  input[type="text"]:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(44,122,115,0.18); }
+  button.btn{
+    font-family:inherit;
+    font-weight:600;
+    font-size:1rem;
+    padding:12px 20px;
+    border-radius:8px;
+    border:2px solid var(--ink);
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+  }
+  button.btn:hover{ filter:brightness(0.92); }
+  button.btn:disabled{ opacity:0.5; cursor:default; }
+  button.btn.ghost{ background:#fff; color:var(--ink); }
+  button.btn:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+
+  .choices{ display:grid; gap:10px; }
+  .choice{
+    font-family:inherit; font-size:1.02rem; text-align:left;
+    padding:13px 14px; border:2px solid var(--ink); border-radius:10px;
+    background:var(--paper); color:var(--ink); cursor:pointer;
+  }
+  .choice:hover{ background:#fff; }
+  .choice.bad{ opacity:0.45; text-decoration:line-through; cursor:default; }
+  .choice.good{ background:#DDF0EC; border-color:var(--teal); }
+
+  .feedback{ margin-top:16px; font-size:0.98rem; line-height:1.5; min-height:22px; }
+  .feedback.ok{ color:var(--teal-dark); }
+  .feedback.no{ color:var(--wrong); }
+  .note{
+    margin-top:10px; padding:10px 12px; background:var(--paper);
+    border-left:4px solid var(--gold); border-radius:4px; font-size:0.95rem; line-height:1.5; color:var(--ink);
+  }
+  .actions{ margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+  .back{ margin-top:18px; text-align:center; }
+  .back button{ background:none; border:none; font-family:inherit; color:#7A7362; cursor:pointer; text-decoration:underline; font-size:0.9rem; }
+
+  .final{ text-align:center; }
+  .final .stars{ font-size:2.2rem; margin-bottom:6px; }
+  .final h2{ margin:0 0 8px; font-size:1.4rem; }
+  .final p{ color:#5C5646; line-height:1.5; }
+  .score-pill{
+    display:inline-block; margin:14px 0;
+    background:var(--paper); border:2px solid var(--ink); border-radius:20px; padding:8px 16px;
+    font-family:'Courier New', Consolas, monospace; font-size:0.9rem;
+  }
+  .final .actions{ justify-content:center; }
+
+  .footer-note{
+    margin-top:18px; text-align:center; font-size:0.78rem; color:#9A9380;
+    font-family:'Courier New', Consolas, monospace;
+  }
+
+  /* Fractions écrites */
+  .frac{ display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.1; margin:0 2px; font-weight:700; color:var(--teal-dark); }
+  .frac .num{ border-bottom:2px solid currentColor; padding:0 3px 1px; }
+  .frac .den{ padding:1px 3px 0; }
+
+  /* Barre de fraction */
+  .bar{ display:flex; width:min(320px,100%); height:54px; border:3px solid var(--ink); border-radius:6px; overflow:hidden; }
+  .bar span{ flex:1; border-right:3px solid var(--ink); background:#fff; }
+  .bar span:last-child{ border-right:none; }
+  .bar span.on{ background:var(--gold); }
+
+  /* Pièces */
+  .coins{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center; max-width:360px; }
+  .coin{
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%; font-weight:700; color:#26363F;
+    border:3px solid #7d8790; box-shadow:inset 0 0 0 3px rgba(255,255,255,0.5);
+    font-size:0.85rem;
+  }
+  .coin.c5{ width:38px; height:38px; background:#C9CED2; }
+  .coin.c10{ width:34px; height:34px; background:#D9DDE0; font-size:0.78rem; }
+  .coin.c25{ width:44px; height:44px; background:#CBD0D4; }
+  .coin.c100{ width:56px; height:56px; background:#E8C45A; border-color:#A8842A; font-size:1rem; }
+  .coin.c200{ width:62px; height:62px; background:#E8C45A; border-color:#8d959c; box-shadow:inset 0 0 0 9px #D5DADD; font-size:1.05rem; }
+
+
+  /* Chronomètre */
+  .timebar{
+    display:none; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+    margin:-8px 0 18px; padding:9px 14px; background:#fff; border:2px solid var(--ink); border-radius:10px;
+    font-family:'Courier New', Consolas, monospace; font-size:0.9rem;
+  }
+  .timebar b{ font-size:1.05rem; color:var(--teal-dark); }
+  .timebar .prac{ color:#7A7362; font-size:0.8rem; }
+
+  /* Temps total (accueil) */
+  .totalbox{
+    display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+    margin:0 0 16px; padding:12px 16px; background:#fff; border:2px solid var(--ink); border-radius:12px;
+  }
+  .tlabel{ font-size:0.8rem; color:#5C5646; text-transform:uppercase; letter-spacing:0.06em; font-family:'Courier New', Consolas, monospace; }
+  .tval{ font-size:1.6rem; font-weight:700; font-family:'Courier New', Consolas, monospace; color:var(--teal-dark); }
+  .tcount{ font-size:0.92rem; color:#5C5646; }
+
+  /* Coche de réussite */
+  .mcard.done{ border-left-color:#2E9E5B; }
+  .check{
+    margin-left:auto; flex:none; width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .check.ok{ background:#2E9E5B; }
+  .check.ok svg{ width:22px; height:22px; }
+  .check.todo{ border:2px dashed #C9BFA6; }
+
+  .banner{
+    margin:0 0 16px; padding:14px 16px; background:#DDF0EC; border:2px solid #2E9E5B; border-radius:12px;
+    line-height:1.5;
+  }
+  .banner .actions{ margin-top:10px; }
+  .menu-actions{ margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; }
+
+  /* Nom et classement */
+  .namefield{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .sumlist{ list-style:none; margin:14px 0 0; padding:0; text-align:left; font-size:0.98rem; line-height:1.9; }
+  .sumlist li{ display:flex; justify-content:space-between; gap:12px; border-bottom:1px dashed var(--line); }
+  .sumlist li.total{ border-bottom:none; font-weight:700; border-top:2px solid var(--ink); margin-top:4px; }
+  .lbhead{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .lbhead h2{ margin:0; font-size:1.3rem; }
+  .sorts{ display:flex; gap:6px; }
+  .sorts button{
+    font-family:inherit; font-size:0.85rem; padding:6px 12px; border:2px solid var(--ink); border-radius:16px;
+    background:#fff; color:var(--ink); cursor:pointer;
+  }
+  .sorts button.on{ background:var(--ink); color:#fff; }
+  .lbtable{ width:100%; border-collapse:collapse; font-size:0.98rem; }
+  .lbtable th{ text-align:left; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:#7A7362; padding:6px 8px; border-bottom:2px solid var(--ink); }
+  .lbtable td{ padding:9px 8px; border-bottom:1px solid var(--line); }
+  .lbtable td.r, .lbtable th.r{ text-align:right; font-family:'Courier New', Consolas, monospace; white-space:nowrap; }
+  .lbtable td.rk{ width:42px; font-weight:700; }
+  .lbtable tr.me td{ background:#FFF3D1; font-weight:700; }
+  .lbempty{ color:#7A7362; line-height:1.5; margin:14px 0; }
+  .lbnote{ margin-top:12px; font-size:0.85rem; color:#7A7362; line-height:1.5; }
+
+
+  .logbox{ margin-top:16px; padding:14px 16px; background:var(--paper); border:2px dashed var(--ink); border-radius:12px; text-align:left; }
+  .logbox p{ margin:0 0 4px; color:var(--ink); }
+  .final .calc{ font-size:0.88rem; color:#7A7362; margin:-6px 0 10px; }
+  .sorts{ flex-wrap:wrap; }
+  .totalbox .tval{ font-size:1.45rem; }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="header">
+    <div>
+      <h1 id="hTitle">Mathématique, 4e année</h1>
+      <p id="hSub">Résolution de problèmes</p>
+    </div>
+    <div class="badge" id="hBadge">Série du jour</div>
+  </div>
+
+  <div id="timebar" class="timebar" aria-live="off"></div>
+  <div id="trail" class="trail" style="display:none"></div>
+  <div id="view"></div>
+
+  <div class="footer-note">Nom : _____________________ &nbsp;&nbsp;·&nbsp;&nbsp; Date : ___________</div>
+</div>
+
+<script>
+// =====================================================================
+//  OUTILS D'AFFICHAGE
+// =====================================================================
+const NB = ' ';
+const fr = (n, d) => `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`;
+
+function clockSVG(h, m){
+  const hourAng = ((h % 12) + m / 60) * 30;
+  const minAng = m * 6;
+  let ticks = '', nums = '';
+  for(let i = 0; i < 60; i++){
+    const a = i * 6 * Math.PI / 180;
+    const long = i % 5 === 0;
+    const r1 = long ? 78 : 82, r2 = 88;
+    ticks += `<line x1="${(100 + r1 * Math.sin(a)).toFixed(1)}" y1="${(100 - r1 * Math.cos(a)).toFixed(1)}" x2="${(100 + r2 * Math.sin(a)).toFixed(1)}" y2="${(100 - r2 * Math.cos(a)).toFixed(1)}" stroke="#26363F" stroke-width="${long ? 2.5 : 1}"/>`;
+  }
+  for(let i = 1; i <= 12; i++){
+    const a = i * 30 * Math.PI / 180;
+    nums += `<text x="${(100 + 64 * Math.sin(a)).toFixed(1)}" y="${(100 - 64 * Math.cos(a) + 6).toFixed(1)}" text-anchor="middle" font-size="16" font-weight="700" fill="#26363F">${i}</text>`;
+  }
+  const hand = (ang, len, w, color) =>
+    `<line x1="100" y1="100" x2="${(100 + len * Math.sin(ang * Math.PI / 180)).toFixed(1)}" y2="${(100 - len * Math.cos(ang * Math.PI / 180)).toFixed(1)}" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 200 200" width="210" height="210" role="img" aria-label="Une horloge à aiguilles">
+    <circle cx="100" cy="100" r="95" fill="#fff" stroke="#26363F" stroke-width="4"/>
+    ${ticks}${nums}${hand(hourAng, 42, 6, '#26363F')}${hand(minAng, 66, 4, '#E8603C')}
+    <circle cx="100" cy="100" r="5" fill="#26363F"/></svg>`;
+}
+
+function barHTML(n, k){
+  let cells = '';
+  for(let i = 0; i < n; i++) cells += `<span class="${i < k ? 'on' : ''}"></span>`;
+  return `<div class="bar" role="img" aria-label="Une barre partagée en ${n} parts égales">${cells}</div>`;
+}
+
+function pieSVG(n, k){
+  const cx = 100, cy = 100, r = 90;
+  let s = '';
+  for(let i = 0; i < n; i++){
+    const a0 = (i / n) * 2 * Math.PI - Math.PI / 2;
+    const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
+    const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    s += `<path d="M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${i < k ? '#E3A72E' : '#fff'}" stroke="#26363F" stroke-width="3"/>`;
+  }
+  return `<svg viewBox="0 0 200 200" width="190" height="190" role="img" aria-label="Un disque partagé en ${n} parts égales">${s}</svg>`;
+}
+
+const COIN_LABEL = { c5:'5 ¢', c10:'10 ¢', c25:'25 ¢', c100:'1 $', c200:'2 $' };
+function coinsHTML(list){
+  let html = '';
+  list.forEach(([kind, count]) => {
+    for(let i = 0; i < count; i++) html += `<div class="coin ${kind}">${COIN_LABEL[kind]}</div>`;
+  });
+  return `<div class="coins" role="img" aria-label="Des pièces de monnaie">${html}</div>`;
+}
+
+// =====================================================================
+//  ALÉATOIRE À GRAINE : les mêmes questions toute la journée,
+//  de nouvelles questions chaque jour
+// =====================================================================
+function hashStr(s){
+  let h = 2166136261 >>> 0;
+  for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function makeRng(seed){
+  const f = mulberry32(hashStr(seed));
+  return {
+    int(a, b){ return a + Math.floor(f() * (b - a + 1)); },
+    step(a, b, s){ return a + s * Math.floor(f() * (Math.floor((b - a) / s) + 1)); },
+    pick(arr){ return arr[Math.floor(f() * arr.length)]; },
+    shuffle(arr){
+      const a = arr.slice();
+      for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(f() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; }
+      return a;
+    }
+  };
+}
+
+// ---------- Mise en forme du français ----------
+function nf(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, NB); }
+function dec(x, d){ return x.toFixed(d).replace('.', ','); }
+function pad(n){ return String(n).padStart(2, '0'); }
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function money(c){
+  const d = Math.floor(c / 100), r = c % 100;
+  return (r === 0 ? String(d) : d + ',' + pad(r)) + NB + '$';
+}
+function cents(c){ return c + NB + '¢'; }
+function tf(min){ return Math.floor(min / 60) + NB + 'h' + NB + pad(min % 60); }
+function dur(min){
+  const h = Math.floor(min / 60), m = min % 60;
+  if(h > 0 && m > 0) return h + NB + 'h' + NB + pad(m);
+  if(h > 0) return h + NB + (h > 1 ? 'heures' : 'heure');
+  return m + NB + 'minutes';
+}
+function fromMin(x){ return [Math.floor(x / 60), x % 60]; }
+function que(name){ return /^[AEIOUYÉÈH]/i.test(name) ? "qu'" + name : 'que ' + name; }
+function de(name){ return /^[AEIOUYÉÈH]/i.test(name) ? "d'" + name : 'de ' + name; }
+const Q = NB + '?';
+
+const NAMES = [
+  {n:'Léa', p:'elle'}, {n:'Sam', p:'il'}, {n:'Zoé', p:'elle'}, {n:'Mathis', p:'il'},
+  {n:'Alice', p:'elle'}, {n:'Rémi', p:'il'}, {n:'Maya', p:'elle'}, {n:'Nathan', p:'il'},
+  {n:'Camille', p:'elle'}, {n:'Éli', p:'il'}, {n:'Sara', p:'elle'}, {n:'Marc', p:'il'},
+  {n:'Jade', p:'elle'}, {n:'Noé', p:'il'}, {n:'Emma', p:'elle'}, {n:'Félix', p:'il'},
+  {n:'Chloé', p:'elle'}, {n:'Olivier', p:'il'}, {n:'Anaïs', p:'elle'}, {n:'Théo', p:'il'}
+];
+function twoNames(R){ const a = R.shuffle(NAMES); return [a[0], a[1]]; }
+
+// =====================================================================
+//  EXAMEN DE RÉSOLUTION DE PROBLÈMES (10 par jour)
+// =====================================================================
+function eHarvest(R){
+  const N = R.pick(NAMES), thing = R.pick(['pommes', 'fraises', 'bleuets', 'tomates', 'citrouilles']);
+  const a = R.int(800, 3000), b = R.int(300, 2500);
+  return {
+    type:'num', unit:thing, answer:a + b,
+    text:`${N.n} a cueilli ${nf(a)} ${thing} le matin et ${nf(b)} autres l'après-midi. Combien de ${thing} y a-t-il dans son panier à la fin de la journée${Q}`,
+    hint:`Pense à ce que tu cherches : le total des deux récoltes.`,
+    explain:`On additionne les deux récoltes : ${nf(a)} + ${nf(b)} = ${nf(a + b)}.`
+  };
+}
+function eArena(R){
+  const ev = R.pick(['le match', 'le spectacle', 'le concert']);
+  const lieu = R.pick(["L'aréna de la ville", "L'amphithéâtre de la région", 'La grande salle du centre culturel']);
+  const C = R.int(50, 95) * 100, E = R.int(5, Math.floor((C - 2000) / 25)) * 25 + 300;
+  return {
+    type:'num', unit:'personnes', answer:C - E,
+    text:`${lieu} peut asseoir ${nf(C)} personnes. Samedi, ${nf(E)} sièges sont restés vides pendant ${ev}. Combien de personnes y ont assisté${Q}`,
+    hint:`Il faut enlever les sièges vides du nombre de places total.`,
+    explain:`${nf(C)} − ${nf(E)} = ${nf(C - E)}.`
+  };
+}
+function eMult(R){
+  const it = R.pick(['crayons de couleur', 'autocollants', 'billes', 'cartes de hockey', 'perles']);
+  const c = R.pick([['boîte', 'boîtes'], ['sac', 'sacs'], ['paquet', 'paquets']]);
+  const a = R.int(12, 48), b = R.int(3, 9);
+  return {
+    type:'num', unit:it, answer:a * b,
+    text:`Chaque ${c[0]} contient ${a} ${it}. Combien de ${it} y a-t-il dans ${b} ${c[1]}${Q}`,
+    hint:`${b} ${c[1]} qui contiennent chacun${c[0] === 'boîte' ? 'e' : ''} ${a} ${it}, c'est une multiplication.`,
+    explain:`${a} × ${b} : ${Math.floor(a / 10) * 10} × ${b} = ${Math.floor(a / 10) * 10 * b} et ${a % 10} × ${b} = ${(a % 10) * b}, donc ${a * b}.`
+  };
+}
+function eDiv(R){
+  const T = R.pick(['Mme Tremblay', 'M. Gagnon', 'Mme Roy', 'M. Bouchard', 'Mme Lavoie']);
+  const it = R.pick(['cahiers', 'livres', 'crayons', 'bâtons de colle']);
+  const k = R.int(4, 9), q = R.int(6, 15), n = k * q;
+  return {
+    type:'num', unit:it, answer:q,
+    text:`${T} a ${n} ${it} à distribuer. ${T.startsWith('Mme') ? 'Elle' : 'Il'} en donne le même nombre à chacun de ses ${k} élèves. Combien de ${it} chaque élève reçoit-il${Q}`,
+    hint:`On partage également : c'est une division.`,
+    explain:`${n} ÷ ${k} = ${q}, parce que ${k} × ${q} = ${n}.`
+  };
+}
+function eFracGroup(R){
+  const FR = {2:'la moitié', 3:'le tiers', 4:'le quart', 5:'le cinquième', 10:'le dixième'};
+  const d = R.pick([2, 3, 4, 5, 10]);
+  let N; do { N = d * R.int(2, 12); } while(N < 12 || N > 40);
+  const ctx = R.pick([
+    {intro:`Dans la classe, il y a ${N} élèves et`, sg:'porte des lunettes', q:`Combien d'élèves portent des lunettes`},
+    {intro:`Dans la classe, il y a ${N} élèves et`, sg:"prend l'autobus", q:`Combien d'élèves prennent l'autobus`},
+    {intro:`Dans la classe, il y a ${N} élèves et`, sg:'a un animal de compagnie', q:`Combien d'élèves ont un animal de compagnie`},
+    {intro:`Une boîte contient ${N} œufs et`, sg:'est brun', q:`Combien y a-t-il d'œufs bruns`}
+  ]);
+  return {
+    type:'num', unit:'', answer:N / d,
+    text:`${ctx.intro} ${FR[d]} d'entre eux ${ctx.sg}. ${ctx.q}${Q}`,
+    hint:`${cap(FR[d])}, c'est 1 part sur ${d} parts égales.`,
+    explain:`On partage ${N} en ${d} parts égales : ${N} ÷ ${d} = ${N / d}.`
+  };
+}
+function eMoneyAdd(R){
+  const N = R.pick(NAMES);
+  const items = R.shuffle([['un livre', 800, 1900], ['un jeu', 600, 1800], ['une revue', 400, 900], ['une casquette', 900, 2000], ['un cahier', 300, 700], ['une balle', 400, 1000]]);
+  const p1 = R.step(items[0][1], items[0][2], 25), p2 = R.step(items[1][1], items[1][2], 25);
+  return {
+    type:'num', unit:'$', answer:(p1 + p2) / 100,
+    text:`${N.n} s'achète ${items[0][0]} à ${money(p1)} et ${items[1][0]} à ${money(p2)}. Combien dépense-t-${N.p} au total${Q}`,
+    hint:`Additionne les deux prix en alignant les virgules.`,
+    explain:`${money(p1)} + ${money(p2)} = ${money(p1 + p2)}.`
+  };
+}
+function ePerimeter(R){
+  const L = R.int(8, 20), W = R.int(4, L - 2);
+  const v = R.pick([
+    {t:`Le jardin de grand-papa est un rectangle de ${L} mètres de long sur ${W} mètres de large. Quelle longueur de clôture faut-il pour en faire tout le tour, en mètres${Q}`},
+    {t:`La cour de l'école est un rectangle de ${L} mètres de long sur ${W} mètres de large. On veut y tendre un ruban tout le tour. Quelle longueur de ruban faut-il, en mètres${Q}`},
+    {t:`Le terrain de soccer des petits mesure ${L} mètres de long sur ${W} mètres de large. Quel est le périmètre du terrain, en mètres${Q}`}
+  ]);
+  return {
+    type:'num', unit:'m', answer:2 * (L + W),
+    text:v.t,
+    hint:`Le périmètre, c'est la longueur totale du contour. Un rectangle a deux longueurs et deux largeurs.`,
+    explain:`${L} + ${W} + ${L} + ${W} = ${2 * (L + W)} mètres, ou (${L} + ${W}) × 2 = ${2 * (L + W)}.`
+  };
+}
+function eDecimals(R){
+  const N = R.pick(NAMES);
+  const a = R.int(12, 58), b = R.int(105, 495);   // dixièmes et centièmes
+  const act = R.pick(['couru', 'marché', 'pédalé']);
+  const d1 = ['lundi', 'mardi', 'jeudi'], d2 = ['mercredi', 'vendredi', 'samedi'];
+  const i = R.int(0, 2);
+  const sum = a * 10 + b;
+  return {
+    type:'num', unit:'km', answer:sum / 100,
+    text:`${cap(d1[i])}, ${N.n} a ${act} ${dec(a / 10, 1)}${NB}km. ${cap(d2[i])}, ${N.p} en a ${act} ${dec(b / 100, 2)}${NB}km. Combien de kilomètres ${N.n} a-t-${N.p} parcourus en tout${Q}`,
+    hint:`Écris ${dec(a / 10, 1)} comme ${dec(a / 10, 2)} pour aligner les chiffres, puis additionne.`,
+    explain:`${dec(a / 10, 2)} + ${dec(b / 100, 2)} = ${dec(sum / 100, 2)}${NB}km.`
+  };
+}
+function eTwoStep(R){
+  const sets = [['un crayon', 'crayons', 'une gomme à effacer', 'gommes à effacer'], ['un cahier', 'cahiers', 'un stylo', 'stylos'], ['une pomme', 'pommes', 'une banane', 'bananes']];
+  const s = R.pick(sets);
+  const a = R.int(1, 5), b = R.int(1, 3), n = R.int(3, 8), m = R.int(2, 6);
+  return {
+    type:'num', unit:'$', answer:a * n + b * m,
+    text:`Au magasin, ${s[0]} coûte ${a}${NB}$ et ${s[2]} coûte ${b}${NB}$. Combien faut-il payer pour ${n} ${s[1]} et ${m} ${s[3]}${Q}`,
+    hint:`Calcule d'abord le prix des ${s[1]}, puis celui des ${s[3]}, et additionne les deux.`,
+    explain:`Les ${s[1]} : ${n} × ${a} = ${n * a}${NB}$. Les ${s[3]} : ${m} × ${b} = ${m * b}${NB}$. Au total : ${n * a} + ${m * b} = ${a * n + b * m}${NB}$.`
+  };
+}
+function eCompare(R){
+  const [A, B] = twoNames(R);
+  const it = R.pick(['billes', 'cartes de hockey', 'autocollants']);
+  const b = R.int(120, 600), a = b + R.int(35, 280);
+  return {
+    type:'num', unit:it, answer:a - b,
+    text:`${A.n} a ${nf(a)} ${it} et ${B.n} en a ${nf(b)}. Combien de ${it} de plus ${A.n} a-t-${A.p} ${que(B.n)}${Q}`,
+    hint:`Pour comparer deux quantités, on trouve la différence entre les deux.`,
+    explain:`On soustrait : ${nf(a)} − ${nf(b)} = ${nf(a - b)}.`
+  };
+}
+function eBus(R){
+  const s = R.pick([24, 30, 36, 40, 48]), k = R.int(2, 4);
+  const stu = s * k - R.int(5, Math.min(25, s * k - 20));
+  return {
+    type:'num', unit:'places', answer:s * k - stu,
+    text:`Pour la sortie scolaire, ${k} autobus de ${s} places chacun transportent ${stu} élèves en tout. Combien de places restent vides${Q}`,
+    hint:`Trouve d'abord le nombre de places total, puis enlève le nombre d'élèves.`,
+    explain:`Les places : ${k} × ${s} = ${k * s}. Les places vides : ${k * s} − ${stu} = ${k * s - stu}.`
+  };
+}
+function eGroups(R){
+  const N = R.pick(NAMES);
+  const p = R.int(6, 15), d = R.int(5, 14), n = p * d;
+  return {
+    type:'num', unit:'jours', answer:d,
+    text:`${N.n} lit ${p} pages de son roman chaque jour. Le roman compte ${n} pages. Combien de jours lui faut-il pour terminer son roman${Q}`,
+    hint:`On cherche combien de groupes de ${p} pages il y a dans ${n} pages.`,
+    explain:`${n} ÷ ${p} = ${d} jours, parce que ${p} × ${d} = ${n}.`
+  };
+}
+function buildExam(R){
+  const pool = [eHarvest, eArena, eMult, eDiv, eFracGroup, eMoneyAdd, ePerimeter, eDecimals, eTwoStep, eCompare, eBus, eGroups];
+  return R.shuffle(pool).slice(0, 10).map(g => g(R));
+}
+
+// =====================================================================
+//  TEST DE L'HEURE (10 par jour) :
+//  4 horloges, 2 additions, 2 soustractions, 2 problèmes mixtes
+// =====================================================================
+function stepsAdd(s, d){
+  const h = Math.floor(d / 60), m = d % 60, out = [];
+  let cur = s;
+  if(h > 0){ out.push(`${tf(cur)} + ${h} h = ${tf(cur + h * 60)}`); cur += h * 60; }
+  if(m > 0){ out.push(`${tf(cur)} + ${m} minutes = ${tf(cur + m)}`); cur += m; }
+  return out.join(', puis ');
+}
+function stepsSub(s, d){
+  const h = Math.floor(d / 60), m = d % 60, out = [];
+  let cur = s;
+  if(h > 0){ out.push(`${tf(cur)} − ${h} h = ${tf(cur - h * 60)}`); cur -= h * 60; }
+  if(m > 0){ out.push(`${tf(cur)} − ${m} minutes = ${tf(cur - m)}`); cur -= m; }
+  return out.join(', puis ');
+}
+
+function clockQ(R, used, mins){
+  let h, m, key, tries = 0;
+  do { h = R.int(1, 12); m = R.pick(mins); key = h + ':' + m; tries++; } while(used.has(key) && tries < 60);
+  used.add(key);
+  const big = m / 5, next = h % 12 + 1;
+  const base = `Chaque nombre de l'horloge vaut 5 minutes pour la grande aiguille. Compte de 5 en 5 à partir du 12.`;
+  const hint = m === 0 ? `Quand la grande aiguille est sur le 12, c'est une heure pile.`
+             : m === 30 ? `Quand la grande aiguille est sur le 6, elle a fait la moitié du tour.`
+             : m >= 45 ? base + ` Attention : quand les minutes approchent de l'heure suivante, la petite aiguille est tout près du chiffre suivant, mais elle ne l'a pas encore atteint. L'heure est celle que la petite aiguille vient de passer.`
+             : m <= 10 ? base + ` Attention : la petite aiguille vient tout juste de dépasser le chiffre de l'heure.`
+             : base;
+  const explain = m === 0
+    ? `La grande aiguille est sur le 12 : c'est une heure pile. La petite aiguille est sur le ${h}. Il est ${h}${NB}h${NB}00.`
+    : `La grande aiguille est sur le ${big} : ${big} × 5 = ${m} minutes. La petite aiguille a dépassé le ${h} sans arriver au ${next}. Il est ${h}${NB}h${NB}${pad(m)}.`;
+  return {
+    type:'time', mod12:true, answer:[h, m], visual:clockSVG(h, m),
+    text:R.pick([`Regarde bien l'horloge. Quelle heure indique-t-elle${Q}`, `Quelle heure est-il sur cette horloge${Q}`, `Quelle heure montre cette horloge${Q}`]),
+    hint, explain, phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+
+const VEH = [
+  {a:'Le train pour Québec', cause:"d'un problème sur la voie"},
+  {a:"L'autobus pour Gatineau", cause:"d'un bouchon sur l'autoroute"},
+  {a:'Le traversier pour Lévis', cause:"d'un fort vent"},
+  {a:"L'avion pour Toronto", cause:'du brouillard'}
+];
+
+function tAddDelay(R){
+  const v = R.pick(VEH), s = R.step(420, 1080, 5), d = R.step(10, 45, 5), e = s + d;
+  return {
+    type:'time', answer:fromMin(e),
+    text:`${v.a} doit partir à ${tf(s)}. À cause ${v.cause}, il part avec ${d} minutes de retard. À quelle heure part-il vraiment${Q}`,
+    hint:`Un retard, c'est du temps qui s'ajoute à l'heure prévue.`,
+    explain:`On additionne : ${tf(s)} + ${d} minutes = ${tf(e)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function tAddEvent(R){
+  const ev = R.pick(['Le film', 'Le spectacle de magie', 'Le match de hockey', 'Le concert de la chorale']);
+  const s = R.step(720, 1170, 5), d = R.pick([75, 80, 90, 95, 105, 110, 120, 135, 150]), e = s + d;
+  return {
+    type:'time', answer:fromMin(e),
+    text:`${ev} commence à ${tf(s)} et dure ${dur(d)}. À quelle heure se termine-t-il${Q}`,
+    hint:`Ajoute d'abord les heures, puis les minutes qui restent.`,
+    explain:`On additionne : ${stepsAdd(s, d)}. Il se termine à ${tf(e)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function tSubDepart(R){
+  const v = R.pick([{a:'Le train', to:'Trois-Rivières'}, {a:"L'autobus", to:'Sherbrooke'}, {a:'Le traversier', to:'Tadoussac'}]);
+  const e = R.step(660, 1260, 5), d = R.pick([60, 75, 90, 105, 120, 135, 150, 165]), s = e - d;
+  return {
+    type:'time', answer:fromMin(s),
+    text:`${v.a} est arrivé à ${v.to} à ${tf(e)}, après un voyage de ${dur(d)}. À quelle heure était-il parti${Q}`,
+    hint:`Pour trouver l'heure de départ, il faut remonter dans le temps à partir de l'heure d'arrivée.`,
+    explain:`On soustrait : ${stepsSub(e, d)}. Il était parti à ${tf(s)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function tSubTrip(R){
+  const N = R.pick(NAMES);
+  const ev = R.pick([
+    {lib:'Le match de hockey', to:"à l'aréna"},
+    {lib:'Le cours de natation', to:'à la piscine'},
+    {lib:'La pratique de soccer', to:'au terrain'},
+    {lib:'La leçon de piano', to:'chez la professeure'}
+  ]);
+  const E = R.step(720, 1170, 5), a = R.pick([10, 15, 20, 30]), t = R.pick([10, 15, 20, 25, 30, 35, 40]), s = E - a - t;
+  return {
+    type:'time', answer:fromMin(s),
+    text:`${ev.lib} ${de(N.n)} commence à ${tf(E)}. ${cap(N.p)} veut arriver ${ev.to} avec ${a} minutes d'avance, et le trajet dure ${t} minutes. À quelle heure ${N.n} doit-${N.p} quitter la maison${Q}`,
+    hint:`Pars de l'heure du début et remonte dans le temps, une étape à la fois.`,
+    explain:`On soustrait deux fois : ${tf(E)} − ${a} min = ${tf(E - a)}, l'heure d'arrivée voulue. Avec ${t} minutes de trajet, ${tf(E - a)} − ${t} min = ${tf(s)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function tElapsed(R){
+  const ev = R.pick(['Le cours de natation', "L'atelier de bricolage", "L'entraînement de basketball", 'La période de lecture']);
+  const s = R.step(540, 1020, 5), d = R.pick([25, 35, 40, 45, 50, 55, 65, 70, 75, 80, 85, 95]), e = s + d;
+  return {
+    type:'num', unit:'minutes', answer:d,
+    text:`${ev} commence à ${tf(s)} et se termine à ${tf(e)}. Combien de minutes dure-t-il${Q} Réponds en minutes.`,
+    hint:`Pour trouver une durée, on calcule le temps écoulé entre l'heure de fin et l'heure de début.`,
+    explain:`On soustrait l'heure de début de l'heure de fin : ${tf(e)} − ${tf(s)} = ${d} minutes.`
+  };
+}
+function tMixTrain(R){
+  const v = R.pick([{a:'Le train pour Québec', who:'le conducteur'}, {a:"L'autobus pour Sherbrooke", who:'la chauffeuse'}, {a:'Le traversier pour Lévis', who:'le capitaine'}]);
+  const dep = R.step(420, 900, 5), d = R.pick([10, 15, 20, 25, 30]), trip = R.pick([90, 105, 120, 135, 150]), g = R.pick([5, 10, 15]);
+  const real = dep + d, planned = real + trip, arr = planned - g;
+  return {
+    type:'time', answer:fromMin(arr),
+    text:`${v.a} devait partir à ${tf(dep)}, mais il part avec ${d} minutes de retard. Le voyage dure normalement ${dur(trip)}, mais ${v.who} rattrape ${g} minutes en allant plus vite. À quelle heure arrive-t-il${Q}`,
+    hint:`Fais-le une étape à la fois : le retard s'ajoute, la durée du voyage s'ajoute, et le temps rattrapé s'enlève.`,
+    explain:`On additionne le retard : ${tf(dep)} + ${d} min = ${tf(real)}, l'heure du départ réel. On ajoute le voyage : ${stepsAdd(real, trip)}. On enlève le temps rattrapé : ${tf(planned)} − ${g} min = ${tf(arr)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function tMixShow(R){
+  const ev = R.pick([{a:'Le spectacle', b:"l'entracte"}, {a:'Le concert', b:"l'entracte"}, {a:'Le film', b:'la pause'}]);
+  const start = R.step(900, 1140, 5), d = R.pick([10, 15, 20, 25, 30]), len = R.pick([90, 105, 120, 135, 150]), g = R.pick([10, 15, 20]);
+  const real = start + d, planned = real + len, end = planned - g;
+  return {
+    type:'time', answer:fromMin(end),
+    text:`${ev.a} devait commencer à ${tf(start)}, mais il a été reporté de ${d} minutes. Il dure normalement ${dur(len)}, ${ev.b} de ${g} minutes compris, mais ${ev.b} est annulé${ev.b === 'la pause' ? 'e' : ''}. À quelle heure se termine-t-il${Q}`,
+    hint:`Le report et la durée s'ajoutent. Sans ${ev.b}, il manque du temps : il faut l'enlever.`,
+    explain:`On additionne le report : ${tf(start)} + ${d} min = ${tf(real)}. On ajoute la durée : ${stepsAdd(real, len)}. On enlève ${ev.b} annulé${ev.b === 'la pause' ? 'e' : ''} : ${tf(planned)} − ${g} min = ${tf(end)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function tMixWalk(R){
+  const N = R.pick(NAMES);
+  const E = R.step(780, 1080, 5), a = R.pick([5, 10, 15]), t = R.pick([20, 25, 30, 35, 40]), g = R.pick([5, 10]);
+  const s = E - a - t + g;
+  return {
+    type:'time', answer:fromMin(s),
+    text:`${N.n} a rendez-vous chez le dentiste à ${tf(E)}. ${cap(N.p)} veut arriver avec ${a} minutes d'avance. La marche prend normalement ${t} minutes, mais ${N.p} connaît un raccourci qui fait gagner ${g} minutes. À quelle heure ${N.n} doit-${N.p} partir${Q}`,
+    hint:`Remonte dans le temps pour l'avance et pour la marche. Le raccourci fait gagner du temps : il faut le rajouter à l'heure de départ.`,
+    explain:`On remonte dans le temps : ${tf(E)} − ${a} min = ${tf(E - a)}. La marche normale : ${tf(E - a)} − ${t} min = ${tf(E - a - t)}. Le raccourci fait gagner ${g} minutes, on les rajoute : ${tf(E - a - t)} + ${g} min = ${tf(s)}.`,
+    phs:['ex. : 8h25', 'ex. : 6h40']
+  };
+}
+function buildTime(R){
+  const used = new Set();
+  const groups = R.shuffle([[0, 15, 30, 45], [5, 10, 20, 25, 35, 40, 50, 55], [0, 15, 30, 45], [5, 10, 20, 25, 35, 40, 50, 55]]);
+  const clocks = groups.map(g => clockQ(R, used, g));
+  const adds = R.shuffle([tAddDelay, tAddEvent]).map(g => g(R));
+  const subs = R.shuffle([tSubDepart, R.pick([tSubTrip, tElapsed])]).map(g => g(R));
+  const mixes = R.shuffle([tMixTrain, tMixShow, tMixWalk]).slice(0, 2).map(g => g(R));
+  return [clocks[0], adds[0], clocks[1], subs[0], clocks[2], mixes[0], clocks[3], subs[1], adds[1], mixes[1]];
+}
+
+// =====================================================================
+//  LA MONNAIE (10 par jour)
+// =====================================================================
+function mCoinsSmall(R){
+  const N = R.pick(NAMES);
+  let a, b, c, tot;
+  do { a = R.int(0, 3); b = R.int(0, 3); c = R.int(0, 3); tot = 25 * a + 10 * b + 5 * c; } while(a + b + c < 4 || tot >= 100 || tot < 30);
+  const parts = [];
+  if(a) parts.push(`${a} ${a > 1 ? 'pièces' : 'pièce'} de 25 ¢ ${a > 1 ? 'font' : 'fait'} ${25 * a} ¢`);
+  if(b) parts.push(`${b} ${b > 1 ? 'pièces' : 'pièce'} de 10 ¢ ${b > 1 ? 'font' : 'fait'} ${10 * b} ¢`);
+  if(c) parts.push(`${c} ${c > 1 ? 'pièces' : 'pièce'} de 5 ¢ ${c > 1 ? 'font' : 'fait'} ${5 * c} ¢`);
+  return {
+    type:'num', unit:'¢', answer:tot / 100, alsoCents:true,
+    visual:coinsHTML([['c25', a], ['c10', b], ['c5', c]]),
+    text:`Voici l'argent ${que(N.n)} a trouvé dans ${R.pick(['sa tirelire', 'la poche de son manteau', 'son sac à dos'])}. Combien d'argent cela fait-il en tout${Q} Réponds en cents.`,
+    hint:`Compte les pièces de la plus grosse valeur à la plus petite, en additionnant au fur et à mesure.`,
+    explain:`${parts.join(', ')}. Au total : ${tot} ¢.`,
+    phs:['ex. : 80 ¢', 'ex. : 45 ¢']
+  };
+}
+function mCoinsBig(R){
+  const N = R.pick(NAMES);
+  let t, o, a, b, c, tot;
+  do { t = R.int(0, 2); o = R.int(0, 3); a = R.int(0, 3); b = R.int(0, 2); c = R.int(0, 2); }
+  while(t + o < 1 || a + b + c < 1 || t + o + a + b + c > 8);
+  const big = 200 * t + 100 * o, small = 25 * a + 10 * b + 5 * c;
+  tot = big + small;
+  return {
+    type:'num', unit:'$', answer:tot / 100,
+    visual:coinsHTML([['c200', t], ['c100', o], ['c25', a], ['c10', b], ['c5', c]]),
+    text:`Voici les pièces ${que(N.n)} a trouvées ${R.pick(['sous son lit', 'dans la voiture', 'dans un vieux sac'])}. Quelle somme d'argent cela fait-il${Q}`,
+    hint:`Commence par les grosses pièces (2 $ et 1 $), puis ajoute les petites.`,
+    explain:`Les pièces de 2 $ et de 1 $ font ${money(big)}. Les petites pièces font ${small} ¢. Au total : ${money(big)} + ${small} ¢ = ${money(tot)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mChange(R){
+  const N = R.pick(NAMES);
+  const it = R.pick(['une tablette de chocolat', 'une revue', 'un sandwich', 'une baguette', 'un jus de fruits']);
+  const p = R.step(155, 975, 5);
+  const bill = p < 500 ? 5 : (p < 1000 ? 10 : 20);
+  const b = bill * 100;
+  return {
+    type:'num', unit:'$', answer:(b - p) / 100, alsoCents:true,
+    text:`${N.n} achète ${it} à ${money(p)} et paie avec un billet de ${bill}${NB}$. Combien d'argent la caissière doit-elle lui remettre${Q}`,
+    hint:`Pour rendre la monnaie, on compte à partir du prix jusqu'à la somme donnée.`,
+    explain:`${money(b)} − ${money(p)} = ${money(b - p)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mMinCoins(R){
+  const N = R.pick(NAMES);
+  const coin = R.pick([25, 10]);
+  let p; do { p = R.step(35, 95, 5); } while(p % coin === 0);
+  const n = Math.ceil(p / coin);
+  const it = R.pick(['un autocollant', 'une gomme parfumée', 'une bille géante', 'un petit ballon']);
+  return {
+    type:'num', unit:'pièces', answer:n,
+    text:`${N.n} veut acheter ${it} à ${cents(p)}, mais ${N.p} n'a que des pièces de ${coin}${NB}¢ dans ses poches. Combien de pièces doit-${N.p} donner, au minimum${Q}`,
+    hint:`Compte de ${coin} en ${coin}, et arrête-toi dès que tu atteins ${p} ou plus.`,
+    explain:`Avec ${n - 1} ${n - 1 > 1 ? 'pièces' : 'pièce'}, on a ${(n - 1) * coin} ¢, ce n'est pas assez. Avec ${n} pièces, on a ${n * coin} ¢, ça suffit.`
+  };
+}
+function mAdd3(R){
+  const N = R.pick(NAMES);
+  const items = R.shuffle([['un pain', 275, 475], ['une tarte', 600, 950], ['un pot de miel', 500, 850], ['du jus de pomme', 300, 600], ['un sac de carottes', 200, 450], ['un morceau de fromage', 650, 1100]]);
+  const ps = [0, 1, 2].map(i => R.step(items[i][1], items[i][2], 25));
+  const sum = ps[0] + ps[1] + ps[2];
+  return {
+    type:'num', unit:'$', answer:sum / 100,
+    text:`Au marché, ${N.n} achète ${items[0][0]} à ${money(ps[0])}, ${items[1][0]} à ${money(ps[1])} et ${items[2][0]} à ${money(ps[2])}. Combien dépense-t-${N.p} en tout${Q}`,
+    hint:`Additionne les trois prix en alignant les virgules.`,
+    explain:`${money(ps[0])} + ${money(ps[1])} + ${money(ps[2])} = ${money(sum)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mMult(R){
+  const v = R.pick([
+    {place:'À la cabane à sucre', one:'un cornet de tire sur la neige', pl:'cornets de tire sur la neige'},
+    {place:"À la cantine de l'aréna", one:'un chocolat chaud', pl:'chocolats chauds'},
+    {place:'À la boulangerie', one:'un muffin', pl:'muffins'}
+  ]);
+  const p = R.pick([150, 225, 250, 325, 350, 400, 450, 475]), n = R.int(2, 6);
+  return {
+    type:'num', unit:'$', answer:p * n / 100,
+    text:`${v.place}, ${v.one} coûte ${money(p)}. Combien faut-il payer pour ${n} ${v.pl}${Q}`,
+    hint:`Plusieurs fois le même prix : pense à une multiplication ou à une addition répétée.`,
+    explain:`${n} × ${money(p)} = ${money(p * n)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mBudget(R){
+  const N = R.pick(NAMES);
+  const t = R.pick([5, 10, 15, 20]) * 100;
+  const it = R.pick(['un livre', 'un jeu de cartes', 'une casquette', 'un ballon']);
+  const p = R.step(125, t - 100, 25);
+  return {
+    type:'num', unit:'$', answer:(t - p) / 100, alsoCents:true,
+    text:`${N.n} a ${money(t)} dans son portefeuille. ${cap(N.p)} s'achète ${it} à ${money(p)}. Combien d'argent lui reste-t-il${Q}`,
+    hint:`Enlève la somme dépensée de la somme de départ.`,
+    explain:`${money(t)} − ${money(p)} = ${money(t - p)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mSave(R){
+  const N = R.pick(NAMES);
+  const a = R.pick([150, 225, 250, 300, 350, 375, 425, 450]), w = R.int(3, 8);
+  const th = R.pick(['un nouveau jeu', 'un cadeau pour sa mère', 'des patins']);
+  return {
+    type:'num', unit:'$', answer:a * w / 100,
+    text:`${N.n} met ${money(a)} de côté chaque semaine pour s'acheter ${th}. Combien aura-t-${N.p} amassé après ${w} semaines${Q}`,
+    hint:`${w} semaines, c'est ${w} fois la même somme.`,
+    explain:`${w} × ${money(a)} = ${money(a * w)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mDiff(R){
+  const items = R.shuffle([['un ballon de soccer', 1200, 2400], ['un chandail', 800, 1800], ['une paire de mitaines', 900, 1900], ['un sac à dos', 2000, 3500], ['un jeu de société', 1500, 3000], ['un casque de vélo', 2500, 4500]]);
+  let a = R.step(items[0][1], items[0][2], 25), b = R.step(items[1][1], items[1][2], 25);
+  while(a === b) b = R.step(items[1][1], items[1][2], 25);
+  const hi = Math.max(a, b), lo = Math.min(a, b);
+  return {
+    type:'num', unit:'$', answer:(hi - lo) / 100,
+    text:`${cap(items[0][0])} coûte ${money(a)} et ${items[1][0]} coûte ${money(b)}. Quelle est la différence de prix entre les deux${Q}`,
+    hint:`La différence entre deux prix, c'est le plus grand moins le plus petit.`,
+    explain:`${money(hi)} − ${money(lo)} = ${money(hi - lo)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mDiscount(R){
+  const it = R.pick(['une paire de patins', 'un sac à dos', 'une veste', 'un jeu de société']);
+  const p = R.step(2500, 6000, 100), r = R.pick([200, 300, 500, 750, 1000, 1200]);
+  return {
+    type:'num', unit:'$', answer:(p - r) / 100,
+    text:`${cap(it)} coûte ${money(p)}. Pendant les soldes, on enlève ${money(r)} du prix. Quel est le nouveau prix${Q}`,
+    hint:`Un rabais, c'est de l'argent qu'on enlève du prix.`,
+    explain:`${money(p)} − ${money(r)} = ${money(p - r)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function mShare(R){
+  const k = R.int(2, 5), q = R.pick([150, 175, 200, 225, 250, 275, 300, 325, 350]);
+  const W = ['', '', 'deux', 'trois', 'quatre', 'cinq'];
+  const th = R.pick(['une grande pizza', "un gâteau d'anniversaire", 'un cadeau pour leur enseignante']);
+  return {
+    type:'num', unit:'$', answer:q / 100,
+    text:`${cap(W[k])} amis se partagent également ${th} qui coûte ${money(k * q)}. Combien chaque ami paie-t-il${Q}`,
+    hint:`On partage le prix en parts égales : c'est une division.`,
+    explain:`${money(k * q)} ÷ ${k} = ${money(q)}, parce que ${k} × ${money(q)} = ${money(k * q)}.`,
+    phs:['ex. : 2,10 $', 'ex. : 6,35 $']
+  };
+}
+function buildMoney(R){
+  const rest = R.shuffle([mChange, mMinCoins, mAdd3, mMult, mBudget, mSave, mDiff, mDiscount, mShare]).slice(0, 8);
+  const all = R.shuffle([mCoinsSmall, mCoinsBig].concat(rest));
+  return all.map(g => g(R));
+}
+
+// =====================================================================
+//  JEUX DE FRACTIONS (10 par jour)
+// =====================================================================
+function fBar(R){
+  const n = R.int(3, 10), k = R.int(1, n - 1);
+  return {
+    type:'frac', answer:k + '/' + n, visual:barHTML(n, k),
+    text:`La barre est coupée en parts égales et certaines sont colorées. Quelle fraction de la barre est colorée${Q} Écris-la avec une barre oblique, comme 1/2.`,
+    hint:`Le chiffre du bas, c'est le nombre de parts en tout. Celui du haut, c'est le nombre de parts colorées.`,
+    explain:`Il y a ${n} parts en tout et ${k} sont colorées. La fraction est ${k}/${n}.`,
+    phs:['ex. : 1/2', 'ex. : 2/5']
+  };
+}
+function fPie(R){
+  const n = R.int(3, 10), k = R.int(1, n - 1);
+  return {
+    type:'frac', answer:k + '/' + n, visual:pieSVG(n, k),
+    text:`Ce disque est partagé en parts égales. Quelle fraction du disque est colorée${Q}`,
+    hint:`Compte toutes les parts du disque, puis compte celles qui sont colorées.`,
+    explain:`Le disque a ${n} parts et ${k} sont colorées. La fraction est ${k}/${n}.`,
+    phs:['ex. : 1/2', 'ex. : 2/5']
+  };
+}
+function fComplement(R){
+  const n = R.int(4, 10), k = R.int(1, n - 1);
+  return {
+    type:'frac', answer:(n - k) + '/' + n, visual:barHTML(n, k),
+    text:`Sur cette barre, certaines parts sont colorées et d'autres restent blanches. Quelle fraction de la barre est blanche${Q} Écris-la avec une barre oblique, comme 1/2.`,
+    hint:`Compte les parts blanches, puis compare avec le nombre de parts en tout.`,
+    explain:`Il y a ${n} parts en tout, dont ${k} colorées. Il reste ${n - k} parts blanches, donc ${n - k}/${n}.`,
+    phs:['ex. : 1/2', 'ex. : 2/5']
+  };
+}
+function fPizza(R){
+  const N = R.pick(NAMES);
+  const n = R.pick([6, 8, 10, 12]), k = R.int(1, n - 2);
+  return {
+    type:'frac', answer:(n - k) + '/' + n, equiv:true,
+    text:`${N.n} coupe sa pizza en ${n} pointes égales. ${cap(N.p)} en mange ${k}. Quelle fraction de la pizza reste-t-il${Q}`,
+    hint:`Commence par trouver combien de pointes il reste.`,
+    explain:`${n} − ${k} = ${n - k} pointes restent, sur ${n} en tout. La fraction est ${n - k}/${n}.`,
+    phs:['ex. : 1/2', 'ex. : 2/5']
+  };
+}
+const FOOD = [
+  {a:"d'un gâteau", same:'tout pareil'},
+  {a:"d'une pizza", same:'toute pareille'},
+  {a:"d'une tarte au sucre", same:'toute pareille'},
+  {a:"d'une tablette de chocolat", same:'toute pareille'}
+];
+function fCompareSame(R){
+  const [A, B] = twoNames(R), f = R.pick(FOOD), d = R.int(4, 10);
+  let a = R.int(1, d - 1), b = R.int(1, d - 1);
+  while(a === b) b = R.int(1, d - 1);
+  const mode = R.pick(['plus', 'moins']);
+  const winner = (mode === 'plus') === (a > b) ? 0 : 1;
+  const opts = R.shuffle([A.n, B.n, 'Autant l\'un que l\'autre']);
+  const winName = winner === 0 ? A.n : B.n;
+  return {
+    type:'choice', options:opts, answer:opts.indexOf(winName),
+    text:`${A.n} a mangé ${fr(a, d)} ${f.a}. ${B.n} a mangé ${fr(b, d)} ${f.a} ${f.same}. Qui en a mangé le ${mode}${Q}`,
+    hint:`Les deux parts sont de la même grosseur, puisque les gâteaux sont coupés pareil. Compare le nombre de parts mangées.`,
+    explain:`Les deux fractions ont le même nombre de parts en tout (${d}). On compare le haut : ${a} et ${b}. C'est ${winName} qui en a mangé le ${mode}.`
+  };
+}
+function fCompareUnit(R){
+  const [A, B] = twoNames(R), f = R.pick(FOOD);
+  let d1 = R.int(2, 10), d2 = R.int(2, 10);
+  while(d1 === d2) d2 = R.int(2, 10);
+  const mode = R.pick(['plus', 'moins']);
+  const bigger = d1 < d2 ? 0 : 1;   // plus petit dénominateur = plus grosse part
+  const winner = mode === 'plus' ? bigger : 1 - bigger;
+  const opts = R.shuffle([A.n, B.n, 'Autant l\'un que l\'autre']);
+  const winName = winner === 0 ? A.n : B.n;
+  return {
+    type:'choice', options:opts, answer:opts.indexOf(winName),
+    text:`${A.n} a mangé ${fr(1, d1)} ${f.a}. ${B.n} a mangé ${fr(1, d2)} ${f.a} ${f.same}. Qui en a mangé le ${mode}${Q}`,
+    hint:`Imagine deux gâteaux identiques, l'un coupé en ${d1} parts, l'autre en ${d2} parts. Où les morceaux sont-ils les plus gros${Q}`,
+    explain:`Plus on coupe en beaucoup de parts, plus chaque part est petite. ${fr(1, Math.min(d1, d2))} est plus grand que ${fr(1, Math.max(d1, d2))}. C'est donc ${winName} qui en a mangé le ${mode}.`
+  };
+}
+function fEquiv(R){
+  const base = R.pick([[1, 2], [1, 3], [1, 4], [2, 3], [1, 5], [3, 4], [2, 5], [1, 6]]);
+  let k; do { k = R.int(2, 4); } while(base[1] * k > 12);
+  const n = base[0] * k, d = base[1] * k;
+  if(R.int(0, 1) === 0){
+    return {
+      type:'num', unit:'', answer:n,
+      text:`Complète pour que les deux fractions représentent la même quantité : ${fr(base[0], base[1])} = ${fr('?', d)}. Quel nombre remplace le point d'interrogation${Q}`,
+      hint:`Si on coupe chaque part en ${k} morceaux égaux, combien de parts de plus obtient-on${Q}`,
+      explain:`Le bas passe de ${base[1]} à ${d} : on multiplie par ${k}. Le haut doit aussi être multiplié par ${k} : ${base[0]} × ${k} = ${n}. Donc ${fr(base[0], base[1])} = ${fr(n, d)}.`
+    };
+  }
+  return {
+    type:'num', unit:'', answer:d,
+    text:`Complète pour que les deux fractions représentent la même quantité : ${fr(base[0], base[1])} = ${fr(n, '?')}. Quel nombre remplace le point d'interrogation${Q}`,
+    hint:`Regarde de combien le haut a changé, et fais pareil pour le bas.`,
+    explain:`Le haut passe de ${base[0]} à ${n} : on multiplie par ${k}. Le bas doit aussi être multiplié par ${k} : ${base[1]} × ${k} = ${d}. Donc ${fr(base[0], base[1])} = ${fr(n, d)}.`
+  };
+}
+function fGroup(R){
+  return eFracGroup(R);
+}
+function fGroupK(R){
+  const d = R.pick([3, 4, 5, 6]), k = R.int(2, d - 1), q = R.int(2, 6), N = d * q;
+  const th = R.pick([['biscuits', 'mangés'], ['muffins', 'mangés'], ['livres', 'prêtés'], ['billets', 'vendus']]);
+  return {
+    type:'num', unit:th[0], answer:q * k,
+    text:`Il y avait ${N} ${th[0]}. Les ${fr(k, d)} ont été ${th[1]}. Combien en a-t-on ${th[1]}${Q}`,
+    hint:`Trouve d'abord la valeur d'une part (1 sur ${d}), puis prends-en ${k}.`,
+    explain:`Une part, c'est ${N} ÷ ${d} = ${q}. ${k} parts, c'est ${k} × ${q} = ${q * k}.`
+  };
+}
+function fAdd(R){
+  const N = R.pick(NAMES);
+  const d = R.int(5, 12), a = R.int(1, d - 3), b = R.int(1, d - a - 1);
+  const v = R.pick([
+    {t:`${N.n} a lu ${fr(a, d)} de son roman lundi et ${fr(b, d)} mardi. Quelle fraction du roman a-t-${N.p} lue en tout${Q}`},
+    {t:`${N.n} a bu ${fr(a, d)} de sa bouteille d'eau pendant la récréation et ${fr(b, d)} au dîner. Quelle fraction de la bouteille a-t-${N.p} bue en tout${Q}`}
+  ]);
+  return {
+    type:'frac', answer:(a + b) + '/' + d, equiv:true,
+    text:v.t,
+    hint:`Les deux fractions ont le même bas. Additionne seulement les parts du haut.`,
+    explain:`${a} + ${b} = ${a + b}. On garde le même bas : ${a + b}/${d}.`,
+    phs:['ex. : 1/2', 'ex. : 2/5']
+  };
+}
+function fSub(R){
+  const N = R.pick(NAMES);
+  const d = R.int(6, 12), a = R.int(4, d - 1), b = R.int(1, a - 1);
+  return {
+    type:'frac', answer:(a - b) + '/' + d, equiv:true,
+    text:`Il restait ${fr(a, d)} d'une pizza. ${N.n} en mange ${fr(b, d)} de la pizza. Quelle fraction de la pizza reste-t-il maintenant${Q}`,
+    hint:`Les deux fractions ont le même bas. Soustrais seulement les parts du haut.`,
+    explain:`${a} − ${b} = ${a - b}. On garde le même bas : ${a - b}/${d}.`,
+    phs:['ex. : 1/2', 'ex. : 2/5']
+  };
+}
+function fOrder(R){
+  const d = R.int(6, 12);
+  const nums = R.shuffle(Array.from({length:d - 1}, (_, i) => i + 1)).slice(0, 3);
+  const mode = R.pick(['grande', 'petite']);
+  const target = mode === 'grande' ? Math.max.apply(null, nums) : Math.min.apply(null, nums);
+  const opts = nums.map(n => fr(n, d));
+  return {
+    type:'choice', options:opts, answer:nums.indexOf(target),
+    text:`Parmi ces trois fractions, laquelle est la plus ${mode}${Q}`,
+    hint:`Les trois fractions ont le même bas. Il suffit de comparer les nombres du haut.`,
+    explain:`Les parts ont toutes la même grosseur (${d} parts en tout). La plus ${mode} est celle qui a le ${mode === 'grande' ? 'plus grand' : 'plus petit'} nombre en haut : ${fr(target, d)}.`
+  };
+}
+function buildFractions(R){
+  const pool = [fBar, fPie, fComplement, fPizza, fCompareSame, fCompareUnit, fEquiv, fGroup, fGroupK, fAdd, fSub, fOrder];
+  return R.shuffle(pool).slice(0, 10).map(g => g(R));
+}
+
+// =====================================================================
+//  CONSTRUCTION DE LA SÉRIE DU JOUR
+// =====================================================================
+function buildQuestions(id, key){
+  const R = makeRng(key + '|' + id);
+  let qs;
+  if(id === 'exam') qs = buildExam(R);
+  else if(id === 'time') qs = buildTime(R);
+  else if(id === 'money') qs = buildMoney(R);
+  else qs = buildFractions(R);
+  // L'exemple affiché dans le champ ne doit jamais donner la bonne réponse
+  qs.forEach(q => { if(q.phs) q.placeholder = safePh(q, q.phs); });
+  return qs;
+}
+function safePh(q, cands){
+  for(let i = 0; i < cands.length; i++){
+    const v = cands[i].replace(/^ex\.\s*:\s*/, '');
+    if(!checkAnswer(q, v)) return cands[i];
+  }
+  return cands[cands.length - 1];
+}
+
+const modules = [
+  { id:'exam', icon:'✎', color:'#2C7A73', title:'Examen de résolution de problèmes',
+    desc:'10 problèmes du jour : additions, soustractions, multiplications, divisions et plus.' },
+  { id:'time', icon:'⏰', color:'#E8603C', title:'Test de l\'heure',
+    desc:'10 questions du jour : horloges, retards, départs, et problèmes où le temps s\'ajoute et se retire.' },
+  { id:'money', icon:'$', color:'#C98A12', title:'La monnaie',
+    desc:'10 problèmes du jour : compter des pièces, payer, rendre la monnaie.' },
+  { id:'fractions', icon:'½', color:'#6B4FA3', title:'Jeux de fractions',
+    desc:'10 jeux du jour : lire, comparer, trouver une fraction égale, partager.' }
+];
+
+// =====================================================================
+//  VÉRIFICATION DES RÉPONSES
+// =====================================================================
+const SPACES = /[\s  ]/g;
+
+function parseNum(s){
+  let t = String(s).toLowerCase().replace(SPACES, '').replace(',', '.');
+  t = t.replace(/[^0-9.\-]/g, '');
+  if(t === '' || t === '.' || t === '-') return NaN;
+  return parseFloat(t);
+}
+
+function parseTime(s){
+  let t = String(s).toLowerCase().replace(SPACES, '');
+  // Mention facultative : am, a.m., pm, p.m., du matin, de l'après-midi, du soir
+  let suf = null;
+  const sm = t.match(/(a\.?m\.?|p\.?m\.?|(?:du|de)?matin|(?:du)?soir|(?:de)?l'?apr[eè]s-?midi)$/);
+  if(sm){
+    suf = /matin|^a\.?m/.test(sm[1]) ? 'am' : 'pm';
+    t = t.slice(0, t.length - sm[1].length);
+  }
+  t = t.replace(/minutes?|min/g, '').replace(/heures?/g, 'h');
+  let m = t.match(/^(\d{1,2})(?:[h:](\d{0,2}))?$/);
+  if(m){
+    const mins = m[2] ? parseInt(m[2], 10) : 0;
+    return mins < 60 ? [parseInt(m[1], 10), mins, suf] : null;
+  }
+  m = t.match(/^(\d{1,2})(\d{2})$/);
+  if(m){
+    const mins = parseInt(m[2], 10);
+    return mins < 60 ? [parseInt(m[1], 10), mins, suf] : null;
+  }
+  return null;
+}
+
+// Erreur fréquente sur les horloges : minutes justes, mais heure décalée de 1
+// (ex. : 4 h 55 lu comme 5 h 55, parce que la petite aiguille touche presque le 5)
+function clockSlip(q, raw){
+  if(q.type !== 'time' || !q.mod12 || q.answer[1] === 0) return null;
+  const t = parseTime(raw);
+  if(!t || t[1] !== q.answer[1]) return null;
+  const hh = q.answer[0], next = hh % 12 + 1, prev = (hh + 10) % 12 + 1;
+  const diff = (((t[0] % 12) - (hh % 12)) + 12) % 12;
+  if(diff === 1) return `Tu as bien lu les minutes. Regarde la petite aiguille : elle n'a pas encore atteint le ${next}, alors l'heure est encore ${hh}.`;
+  if(diff === 11) return `Tu as bien lu les minutes. Regarde la petite aiguille : elle a déjà dépassé le ${hh}, alors l'heure n'est plus ${prev}.`;
+  return null;
+}
+
+function checkAnswer(q, raw){
+  if(q.type === 'num'){
+    const n = parseNum(raw);
+    if(isNaN(n)) return false;
+    if(Math.abs(n - q.answer) < 0.001) return true;
+    if(q.alsoCents && Math.abs(n - q.answer * 100) < 0.001) return true;
+    return false;
+  }
+  if(q.type === 'time'){
+    const t = parseTime(raw);
+    if(!t) return false;
+    const h = q.answer[0], m = q.answer[1];
+    if(t[1] !== m) return false;
+    // Horloge : on ne peut pas voir si c'est le matin ou l'après-midi, donc les deux sont acceptés
+    if(q.mod12) return t[0] % 12 === h % 12;
+    // Problème à heure précise : on accepte l'heure en 24 h ou en 12 h avec am/pm
+    let hh = t[0];
+    if(t[2] === 'pm' && hh < 12) hh += 12;
+    else if(t[2] === 'am' && hh === 12) hh = 0;
+    return hh === h;
+  }
+  if(q.type === 'frac'){
+    const t = String(raw).replace(SPACES, '');
+    if(t === q.answer) return true;
+    if(q.equiv){
+      const m = t.match(/^(\d+)\/(\d+)$/), a = q.answer.split('/');
+      if(m && parseInt(m[2], 10) > 0) return parseInt(m[1], 10) * parseInt(a[1], 10) === parseInt(a[0], 10) * parseInt(m[2], 10);
+    }
+    return false;
+  }
+  return false;
+}
+
+// =====================================================================
+//  JOUR, PROGRESSION, ÉCRANS
+// =====================================================================
+function todayKey(){
+  try {
+    const p = new URLSearchParams(location.search).get('jour');
+    if(p && /^\d{4}-\d{2}-\d{2}$/.test(p)) return p;
+  } catch(e) {}
+  const d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function dayLabel(key){
+  try {
+    const d = new Date(key + 'T12:00:00');
+    return cap(d.toLocaleDateString('fr-CA', { weekday:'long', day:'numeric', month:'long', year:'numeric' }));
+  } catch(e) { return key; }
+}
+
+const DAY = todayKey();
+let saved = { day:DAY, scores:{}, pid:'', name:'' };
+try {
+  const s0 = JSON.parse(localStorage.getItem('math4-progression'));
+  if(s0 && s0.day === DAY && s0.scores){
+    saved = Object.assign(saved, s0);
+    // Les sections terminées sans temps enregistré (ancienne version) sont à refaire
+    Object.keys(saved.scores).forEach(k => {
+      const x = saved.scores[k];
+      if(!x || typeof x.seconds !== 'number') { delete saved.scores[k]; return; }
+      if(typeof x.points !== 'number') x.points = calcPoints(x.firstTry || 0, x.seconds);
+    });
+  }
+} catch(e) {}
+function persist(){ try { localStorage.setItem('math4-progression', JSON.stringify(saved)); } catch(e) {} }
+
+// ---------- Chronomètre ----------
+function fmt(sec){
+  sec = Math.max(0, Math.round(sec));
+  const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), r = sec % 60;
+  return (h ? h + ':' + pad(m) : pad(m)) + ':' + pad(r);
+}
+let secStart = 0, ticker = null, practice = false;
+function elapsed(){ return Math.max(0, Math.round((Date.now() - secStart) / 1000)); }
+function totalDone(){
+  let t = 0;
+  modules.forEach(m => { const x = saved.scores[m.id]; if(x) t += x.seconds || 0; });
+  return t;
+}
+function doneCount(){ return modules.filter(m => saved.scores[m.id]).length; }
+function sumFirst(){ let a = 0, b = 0; modules.forEach(m => { const x = saved.scores[m.id]; if(x){ a += x.firstTry; b += x.total; } }); return [a, b]; }
+function updateClock(){
+  const a = document.getElementById('tSec'), b = document.getElementById('tTot');
+  if(a) a.textContent = fmt(elapsed());
+  if(b) b.textContent = fmt(totalDone() + (practice ? 0 : elapsed()));
+}
+function stopTicker(){ if(ticker){ clearInterval(ticker); ticker = null; } }
+function startTicker(){ stopTicker(); ticker = setInterval(updateClock, 1000); }
+
+// ---------- Classement : partagé si possible, sinon cet appareil ----------
+let DB = null, CAN_WRITE = null;
+(async function initCaps(){
+  try {
+    if(window.claude && typeof window.claude.use === 'function'){
+      DB = await window.claude.use('db');
+      const U = await window.claude.use('user');
+      if(U && typeof U.can === 'function') CAN_WRITE = await U.can('data.write');
+    }
+  } catch(e) { DB = null; }
+})();
+// ---------- Score : 5 points par question réussie du premier coup, multipliés par un bonus de vitesse ----------
+// Bonus : ×2 à 2 min 30 s ou moins, ×1 à 5 min, ×0,5 à 10 min ou plus (entre les deux, proportionnel).
+function speedBonus(sec){ return Math.min(2, Math.max(0.5, 300 / Math.max(1, sec))); }
+function calcPoints(firstTry, sec){ return Math.round(5 * firstTry * speedBonus(sec)); }
+function bonusStr(sec){ return '×' + dec(Math.round(speedBonus(sec) * 100) / 100, 2); }
+
+const LS_KEY = 'math4-scores-v2';
+function localRows(){
+  try { const a = JSON.parse(localStorage.getItem(LS_KEY)) || []; return a.filter(r => r && r.day === DAY && r.section); } catch(e) { return []; }
+}
+function setLocal(e){
+  try {
+    const a = JSON.parse(localStorage.getItem(LS_KEY)) || [];
+    const i = a.findIndex(r => r.id === e.id);
+    if(i >= 0) a[i] = e; else a.push(e);
+    localStorage.setItem(LS_KEY, JSON.stringify(a.slice(-400)));
+  } catch(x) {}
+}
+function cleanName(v){ return String(v).replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20); }
+function normRow(id, d){
+  return {
+    id:id, pid:String(d && d.pid || id), name:cleanName(d && d.name || '') || 'Anonyme',
+    section:String(d && d.section || ''), score:Number(d && d.score) || 0,
+    seconds:Number(d && d.seconds) || 0, at:Number(d && d.at) || 0, shared:!(d && d.shared === false)
+  };
+}
+function sumPoints(){ let p = 0; modules.forEach(m => { const x = saved.scores[m.id]; if(x) p += x.points || 0; }); return p; }
+function loggedCount(){ return modules.filter(m => saved.scores[m.id] && saved.scores[m.id].logged).length; }
+
+// Enregistre le score de chaque section terminée à 100 % (jamais une section abandonnée)
+async function logScores(name, ids){
+  if(!saved.pid) saved.pid = 'p' + Math.random().toString(36).slice(2, 10);
+  saved.name = name;
+  for(const id of ids){
+    const x = saved.scores[id];
+    if(!x || x.logged) continue;
+    const docId = DAY + '-' + saved.pid + '-' + id;
+    const entry = { pid:saved.pid, name:name, day:DAY, section:id, score:x.points, seconds:x.seconds, firstTry:x.firstTry, total:x.total, at:Date.now() };
+    let shared = false;
+    try {
+      if(DB && CAN_WRITE !== false){ await DB.collection('leaderboard').doc(docId).set(entry); shared = true; }
+    } catch(e) { shared = false; }
+    x.logged = true; x.shared = shared;
+    persist();
+    setLocal(Object.assign({ id:docId, shared:shared }, entry));
+  }
+}
+
+let mod = null;
+let idx = 0;
+let firstTry = 0;
+
+const viewEl = document.getElementById('view');
+const trailEl = document.getElementById('trail');
+const hTitle = document.getElementById('hTitle');
+const hSub = document.getElementById('hSub');
+const hBadge = document.getElementById('hBadge');
+
+function setAccent(color){ document.documentElement.style.setProperty('--accent', color); }
+
+function renderTrail(){
+  trailEl.style.display = 'flex';
+  trailEl.innerHTML = '';
+  mod.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < idx ? ' done' : (i === idx ? ' current' : ''));
+    trailEl.appendChild(d);
+  });
+}
+
+const CHECK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let LB_UNSUB = null;
+function stopLb(){ if(LB_UNSUB){ try { LB_UNSUB(); } catch(e) {} LB_UNSUB = null; } }
+const timebarEl = document.getElementById('timebar');
+
+function showMenu(){
+  mod = null;
+  stopTicker(); stopLb();
+  timebarEl.style.display = 'none';
+  trailEl.style.display = 'none';
+  setAccent('#2C7A73');
+  hTitle.textContent = 'Mathématique, 4e année';
+  hSub.textContent = 'Résolution de problèmes';
+  hBadge.textContent = 'Série du jour';
+
+  const n = doneCount(), all = n === modules.length;
+  const unlogged = modules.filter(m => saved.scores[m.id] && !saved.scores[m.id].logged);
+  let html = `<p class="menu-intro">Choisis une activité. Tu verras une question à la fois, et il faut trouver la bonne réponse pour passer à la suivante. De nouvelles questions arrivent chaque jour.</p>
+    <p class="daydate">Questions du ${dayLabel(DAY).toLowerCase()}</p>
+    <div class="totalbox" id="totalbox">
+      <div><div class="tlabel">Temps total</div><div class="tval" id="totalVal">${fmt(totalDone())}</div></div>
+      <div><div class="tlabel">Score total</div><div class="tval" id="pointsVal">${sumPoints()} pts</div></div>
+      <div class="tcount">${n} sur ${modules.length} sections terminées</div></div>`;
+  if(unlogged.length){
+    html += `<div class="banner"><strong>${all ? 'Les 4 sections sont terminées ! ' : ''}${unlogged.length === 1 ? 'Tu as 1 score à enregistrer.' : 'Tu as ' + unlogged.length + ' scores à enregistrer.'}</strong>
+      <div class="actions"><button class="btn" id="logAllBtn">Enregistrer ${unlogged.length === 1 ? 'mon score' : 'mes scores'}</button></div></div>`;
+  } else if(all){
+    html += `<div class="banner"><strong>Les 4 sections sont terminées !</strong> Score total : ${sumPoints()} pts.
+      <div class="actions"><button class="btn" id="seeLbBtn">Voir le classement</button></div></div>`;
+  }
+  html += `<div class="menu">`;
+  modules.forEach(m => {
+    const sc = saved.scores[m.id];
+    const score = sc ? `<div class="mscore">Terminé : ${sc.firstTry} sur ${sc.total} du premier coup · ${fmt(sc.seconds)} · ${sc.points} pts${sc.logged ? ' · enregistré' : ''}</div>` : '';
+    const mark = sc
+      ? `<span class="check ok" role="img" aria-label="Section terminée">${CHECK_SVG}</span>`
+      : `<span class="check todo" role="img" aria-label="Section à faire"></span>`;
+    html += `<button class="mcard${sc ? ' done' : ''}" data-id="${m.id}" style="--accent:${m.color}">
+      <div class="micon">${m.icon}</div>
+      <div><div class="mtitle">${m.title}</div><div class="mdesc">${m.desc}</div>${score}</div>${mark}
+    </button>`;
+  });
+  html += `</div><div class="menu-actions" id="menuActions"><button class="btn ghost" id="lbBtn">Voir le classement du jour</button>
+    <button class="btn ghost" id="newPupil">Nouvel élève</button></div>`;
+  viewEl.innerHTML = html;
+  viewEl.querySelectorAll('.mcard').forEach(b => {
+    b.addEventListener('click', () => startModule(b.getAttribute('data-id')));
+  });
+  document.getElementById('lbBtn').addEventListener('click', showLeaderboard);
+  const la = document.getElementById('logAllBtn'); if(la) la.addEventListener('click', showLogAll);
+  const sl = document.getElementById('seeLbBtn'); if(sl) sl.addEventListener('click', showLeaderboard);
+  document.getElementById('newPupil').addEventListener('click', () => {
+    const box = document.getElementById('menuActions');
+    box.innerHTML = `<p class="lbnote">Effacer la progression de cet appareil pour accueillir un nouvel élève ? Les scores déjà enregistrés restent au classement.</p>
+      <button class="btn" id="newYes">Oui, nouvel élève</button> <button class="btn ghost" id="newNo">Annuler</button>`;
+    document.getElementById('newNo').addEventListener('click', showMenu);
+    document.getElementById('newYes').addEventListener('click', () => {
+      saved = { day:DAY, scores:{}, pid:'', name:'' };
+      persist(); showMenu();
+    });
+  });
+}
+
+function startModule(id){
+  const meta = modules.find(m => m.id === id);
+  mod = { id:meta.id, color:meta.color, title:meta.title, questions:buildQuestions(id, DAY) };
+  idx = 0;
+  firstTry = 0;
+  stopLb();
+  practice = !!saved.scores[id];
+  secStart = Date.now();
+  timebarEl.innerHTML = practice
+    ? `<span>⏱ Pratique <b id="tSec">00:00</b> <span class="prac">(le score ne change pas)</span></span><span>Total <b id="tTot">${fmt(totalDone())}</b></span>`
+    : `<span>⏱ Cette section <b id="tSec">00:00</b></span><span>Total <b id="tTot">${fmt(totalDone())}</b></span>`;
+  timebarEl.style.display = 'flex';
+  updateClock(); startTicker();
+  setAccent(mod.color);
+  hTitle.textContent = mod.title;
+  hSub.textContent = 'Mathématique, 4e année';
+  hBadge.textContent = mod.questions.length + ' questions';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  renderTrail();
+  const q = mod.questions[idx];
+  const isLast = idx === mod.questions.length - 1;
+  let attempts = 0;
+
+  let body = `<div class="card">
+    <div class="qnum">QUESTION ${idx + 1} SUR ${mod.questions.length}</div>
+    ${q.visual ? `<div class="visual">${q.visual}</div>` : ''}
+    <p class="qtext">${q.text}</p>`;
+
+  if(q.type === 'choice'){
+    body += `<div class="choices" id="choices">` +
+      q.options.map((o, i) => `<button class="choice" data-i="${i}">${o}</button>`).join('') +
+      `</div>`;
+  } else {
+    const ph = q.placeholder || (q.unit ? 'Ta réponse (' + q.unit + ')' : 'Ta réponse');
+    body += `<div class="answer-row">
+      <input type="text" id="answerInput" placeholder="${ph}" autocomplete="off" ${q.type === 'num' ? 'inputmode="decimal"' : ''}>
+      <button class="btn" id="submitBtn">Vérifier</button>
+    </div>`;
+  }
+  body += `<div class="feedback" id="feedback" aria-live="polite"></div><div id="extra"></div></div>
+    <div class="back"><button id="backBtn">Retour au menu</button></div>`;
+  viewEl.innerHTML = body;
+
+  const feedback = document.getElementById('feedback');
+  const extra = document.getElementById('extra');
+  document.getElementById('backBtn').addEventListener('click', showMenu);
+
+  function success(){
+    if(attempts === 0) firstTry++;
+    feedback.className = 'feedback ok';
+    feedback.textContent = attempts === 0 ? '✔ Bonne réponse, du premier coup !' : '✔ Bonne réponse ! Tu as persévéré.';
+    extra.innerHTML = `<div class="note">${q.explain}</div>
+      <div class="actions"><button class="btn" id="nextBtn">${isLast ? 'Voir mes résultats' : 'Question suivante'}</button></div>`;
+    const nb = document.getElementById('nextBtn');
+    nb.focus();
+    nb.addEventListener('click', () => {
+      idx++;
+      if(idx >= mod.questions.length) renderFinal(); else renderQuestion();
+    });
+  }
+
+  function failure(raw){
+    attempts++;
+    feedback.className = 'feedback no';
+    const slip = clockSlip(q, raw);
+    if(slip && attempts <= 2){
+      feedback.textContent = slip;
+    } else if(attempts === 1){
+      feedback.textContent = 'Pas tout à fait. Relis bien la question et essaie encore !';
+    } else if(attempts === 2){
+      feedback.innerHTML = 'Pas encore. Un petit coup de pouce : ' + q.hint;
+    } else {
+      feedback.textContent = 'Pas encore. Regardons ça étape par étape.';
+      extra.innerHTML = `<div class="note">${q.explain}</div>`;
+    }
+  }
+
+  if(q.type === 'choice'){
+    document.querySelectorAll('#choices .choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(btn.classList.contains('bad')) return;
+        const i = parseInt(btn.getAttribute('data-i'), 10);
+        if(i === q.answer){
+          btn.classList.add('good');
+          document.querySelectorAll('#choices .choice').forEach(b => b.disabled = true);
+          success();
+        } else {
+          btn.classList.add('bad');
+          failure();
+        }
+      });
+    });
+  } else {
+    const input = document.getElementById('answerInput');
+    const btn = document.getElementById('submitBtn');
+    input.focus();
+    function submit(){
+      if(input.value.trim() === ''){
+        feedback.className = 'feedback no';
+        feedback.textContent = 'Écris une réponse avant de vérifier.';
+        return;
+      }
+      if(checkAnswer(q, input.value)){
+        input.disabled = true;
+        btn.disabled = true;
+        success();
+      } else {
+        failure(input.value);
+        input.select();
+      }
+    }
+    btn.addEventListener('click', submit);
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+  }
+}
+
+function nameRow(prefill, btnLabel){
+  return `<div class="namefield">
+      <input type="text" id="nameInput" maxlength="20" placeholder="Ton prénom" autocomplete="off" aria-label="Ton prénom" value="">
+      <button class="btn" id="logBtn">${btnLabel}</button></div>
+    <div class="feedback" id="logFb" aria-live="polite"></div>`;
+}
+// Branche le formulaire du nom : onDone() est appelé une fois les scores enregistrés
+function wireNameForm(ids, onDone){
+  const inp = document.getElementById('nameInput'), btn = document.getElementById('logBtn'), fb = document.getElementById('logFb');
+  inp.value = saved.name || '';
+  inp.focus();
+  let busy = false;
+  async function go(){
+    if(busy) return;
+    const name = cleanName(inp.value);
+    if(!name){ fb.className = 'feedback no'; fb.textContent = 'Écris ton prénom pour enregistrer ton score.'; return; }
+    busy = true; btn.disabled = true; inp.disabled = true;
+    await logScores(name, ids);
+    onDone();
+  }
+  btn.addEventListener('click', go);
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') go(); });
+}
+
+function renderFinal(){
+  const total = mod.questions.length;
+  const secs = elapsed();
+  stopTicker();
+  timebarEl.style.display = 'none';
+  const wasPractice = practice;
+  // Le score se calcule et se range seulement ici : la section est terminée à 100 %
+  if(!wasPractice){
+    saved.scores[mod.id] = { firstTry:firstTry, total:total, seconds:secs, points:calcPoints(firstTry, secs), logged:false, shared:false };
+    persist();
+  }
+  const rec = saved.scores[mod.id];
+  trailEl.style.display = 'flex';
+  trailEl.innerHTML = '';
+  for(let i = 0; i < total; i++){
+    const d = document.createElement('div');
+    d.className = 'dot done';
+    trailEl.appendChild(d);
+  }
+  const msg = firstTry === total
+    ? 'Un sans-faute du premier coup, bravo !'
+    : 'Tu as trouvé toutes les bonnes réponses, même celles qui demandaient plus d\'un essai. C\'est comme ça qu\'on apprend.';
+  const n = doneCount(), all = n === modules.length;
+  let body;
+  if(wasPractice){
+    body = `<div class="score-pill">⏱ ${fmt(secs)} · pratique</div><p>Ton score et ton temps du jour pour cette section ne changent pas.</p>`;
+  } else {
+    body = `<div class="score-pill">⭐ ${rec.points} pts · ⏱ ${fmt(secs)}</div>
+       <p class="calc">5 pts × ${firstTry} réussies du premier coup = ${5 * firstTry} · bonus de vitesse ${bonusStr(secs)}</p>
+       <p>Temps total : <strong>${fmt(totalDone())}</strong> · Score total : <strong>${sumPoints()} pts</strong> (${n} sur ${modules.length} sections).</p>
+       ${all ? '<p><strong>Les 4 sections sont terminées !</strong></p>' : ''}
+       <div class="logbox" id="logBox"><p>Enregistre ton score au classement :</p>${nameRow('', 'Enregistrer mon score')}</div>`;
+  }
+  viewEl.innerHTML = `<div class="card final">
+    <div class="stars">🌟</div>
+    <h2>Activité terminée</h2>
+    <p>${msg}</p>
+    ${body}
+    <div class="actions">
+      <button class="btn ghost" id="menuBtn">Retour au menu</button>
+      <button class="btn ghost" id="againBtn">Refaire pour m'exercer</button>
+    </div>
+  </div>`;
+  document.getElementById('againBtn').addEventListener('click', () => startModule(mod.id));
+  document.getElementById('menuBtn').addEventListener('click', showMenu);
+  if(!wasPractice){
+    wireNameForm([mod.id], () => {
+      const box = document.getElementById('logBox');
+      if(!box) return;
+      box.innerHTML = `<p>✔ Score enregistré au classement.</p><div class="actions"><button class="btn" id="seeLb">Voir le classement</button></div>`;
+      document.getElementById('seeLb').addEventListener('click', showLeaderboard);
+    });
+  }
+}
+
+// Enregistrer d'un coup les scores des sections terminées mais pas encore inscrites
+function showLogAll(){
+  stopTicker(); stopLb();
+  timebarEl.style.display = 'none';
+  trailEl.style.display = 'none';
+  setAccent('#2C7A73');
+  hTitle.textContent = 'Enregistrer mes scores';
+  hSub.textContent = 'Mathématique, 4e année';
+  hBadge.textContent = 'Série du jour';
+  const todo = modules.filter(m => saved.scores[m.id] && !saved.scores[m.id].logged);
+  let items = '';
+  todo.forEach(m => {
+    const x = saved.scores[m.id];
+    items += `<li><span>${m.title}</span><span>${x.points} pts · ${fmt(x.seconds)}</span></li>`;
+  });
+  viewEl.innerHTML = `<div class="card final">
+    <div class="stars">🏆</div>
+    <h2>Enregistre ton score</h2>
+    <ul class="sumlist">${items}</ul>
+    ${nameRow('', 'Enregistrer')}
+    <div class="actions"><button class="btn ghost" id="backMenu">Retour au menu</button></div>
+  </div>`;
+  document.getElementById('backMenu').addEventListener('click', showMenu);
+  wireNameForm(todo.map(m => m.id), showLeaderboard);
+}
+
+let lbTab = 'total';
+const SHORT = { exam:'Examen', time:'Heure', money:'Monnaie', fractions:'Fractions' };
+function showLeaderboard(){
+  stopTicker(); stopLb();
+  timebarEl.style.display = 'none';
+  trailEl.style.display = 'none';
+  setAccent('#2C7A73');
+  hTitle.textContent = 'Classement du jour';
+  hSub.textContent = 'Mathématique, 4e année';
+  hBadge.textContent = 'Série du jour';
+  let tabs = `<button data-t="total">Total</button>`;
+  modules.forEach(m => { tabs += `<button data-t="${m.id}">${SHORT[m.id]}</button>`; });
+  viewEl.innerHTML = `<div class="card">
+    <div class="lbhead"><h2>${dayLabel(DAY)}</h2></div>
+    <div class="sorts" id="lbTabs">${tabs}</div>
+    <div id="lbRows" style="margin-top:12px"></div>
+    <div class="lbnote" id="lbFormula">Score = 5 points × questions réussies du premier coup × bonus de vitesse (×2 à 2 min 30 s ou moins, ×1 à 5 min, ×0,5 à 10 min ou plus).</div>
+    <div class="lbnote" id="lbNote"></div>
+    <div class="actions"><button class="btn" id="lbBack">Retour au menu</button></div>
+  </div>`;
+  let rows = localRows().map(r => normRow(r.id, r));
+  let sharedBoard = false;
+  const note = document.getElementById('lbNote');
+  function paintNote(){
+    let t = sharedBoard
+      ? 'Classement partagé : on y voit tous les élèves qui ont enregistré un score aujourd\'hui.'
+      : 'Classement de cet appareil seulement.';
+    const miss = modules.filter(m => saved.scores[m.id] && saved.scores[m.id].logged && !saved.scores[m.id].shared).length;
+    if(miss) t += ' ' + (miss === 1 ? '1 de tes scores est enregistré ici, mais n\'a' : miss + ' de tes scores sont enregistrés ici, mais n\'ont') + ' pas pu être partagé' + (miss === 1 ? '' : 's') + ' avec la classe.';
+    note.textContent = t;
+  }
+  function paintRows(){
+    document.querySelectorAll('#lbTabs button').forEach(b => { b.className = b.getAttribute('data-t') === lbTab ? 'on' : ''; });
+    const box = document.getElementById('lbRows');
+    if(!box) return;
+    let list;
+    if(lbTab === 'total'){
+      const g = {};
+      rows.forEach(r => {
+        const o = g[r.pid] || (g[r.pid] = { pid:r.pid, name:r.name, at:0, score:0, seconds:0, secs:{} });
+        if(!o.secs[r.section]){ o.secs[r.section] = 1; o.score += r.score; o.seconds += r.seconds; }
+        if(r.at >= o.at){ o.at = r.at; o.name = r.name; }
+      });
+      list = Object.keys(g).map(k => ({ pid:k, name:g[k].name, score:g[k].score, seconds:g[k].seconds, n:Object.keys(g[k].secs).length }));
+    } else {
+      list = rows.filter(r => r.section === lbTab).map(r => ({ pid:r.pid, name:r.name, score:r.score, seconds:r.seconds }));
+    }
+    list.sort((a, b) => (b.score - a.score) || (a.seconds - b.seconds));
+    box.textContent = '';
+    if(!list.length){
+      const p = document.createElement('p'); p.className = 'lbempty';
+      p.textContent = 'Personne n\'a encore enregistré de score ici aujourd\'hui. Termine une section pour inscrire ton nom.';
+      box.appendChild(p); return;
+    }
+    const tbl = document.createElement('table'); tbl.className = 'lbtable';
+    const hr = tbl.createTHead().insertRow();
+    const heads = lbTab === 'total' ? [['#', ''], ['Nom', ''], ['Points', 'r'], ['Sections', 'r'], ['Temps', 'r']] : [['#', ''], ['Nom', ''], ['Points', 'r'], ['Temps', 'r']];
+    heads.forEach(h => { const th = document.createElement('th'); th.textContent = h[0]; if(h[1]) th.className = h[1]; hr.appendChild(th); });
+    const tb = tbl.createTBody();
+    const medal = ['🥇', '🥈', '🥉'];
+    list.forEach((r, i) => {
+      const tr = tb.insertRow(); if(saved.pid && r.pid === saved.pid) tr.className = 'me';
+      const c0 = tr.insertCell(); c0.className = 'rk'; c0.textContent = i < 3 ? medal[i] : String(i + 1);
+      tr.insertCell().textContent = r.name;
+      const c2 = tr.insertCell(); c2.className = 'r'; c2.textContent = r.score + ' pts';
+      if(lbTab === 'total'){ const c = tr.insertCell(); c.className = 'r'; c.textContent = r.n + ' / ' + modules.length; }
+      const c3 = tr.insertCell(); c3.className = 'r'; c3.textContent = fmt(r.seconds);
+    });
+    box.appendChild(tbl);
+  }
+  document.querySelectorAll('#lbTabs button').forEach(b => b.addEventListener('click', () => { lbTab = b.getAttribute('data-t'); paintRows(); }));
+  document.getElementById('lbBack').addEventListener('click', showMenu);
+  paintRows(); paintNote();
+  if(DB){
+    try {
+      LB_UNSUB = DB.collection('leaderboard').where('day', '==', DAY).limit(1000).onSnapshot(snap => {
+        sharedBoard = true;
+        rows = snap.docs.map(d => normRow(d.id, d.data())).filter(r => r.section);
+        // Scores non partagés : on les garde visibles (surlignés) pour que l'élève les retrouve
+        localRows().forEach(r => { if(r.shared === false && r.pid === saved.pid && !rows.some(x => x.id === r.id)) rows.push(normRow(r.id, r)); });
+        paintRows(); paintNote();
+      }, () => { sharedBoard = false; rows = localRows().map(r => normRow(r.id, r)); paintRows(); paintNote(); });
+    } catch(e) { LB_UNSUB = null; }
+  }
+}
+
+showMenu();
+</script>
+
+</body>
+</html>
