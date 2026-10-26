@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathématique 4e année</title>
+<title>Mathématique, 2e Cycle</title>
 <style>
   :root{
     --paper:#FBF6EC;
@@ -93,6 +93,48 @@
   .mtitle{ font-weight:700; font-size:1.1rem; }
   .mdesc{ font-size:0.9rem; color:#5C5646; margin-top:2px; }
   .mscore{ font-family:'Courier New', Consolas, monospace; font-size:0.78rem; color:var(--teal-dark); margin-top:4px; }
+
+
+  /* Cycles + 1er cycle */
+  .c1-set{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0 14px; }
+  .c1-set b{ font-size:0.9rem; }
+  .c1-cnt{ all:unset; cursor:pointer; box-sizing:border-box; border:2px solid var(--ink); background:#fff; padding:6px 14px; border-radius:10px; font-weight:700; }
+  .c1-cnt.on{ background:var(--accent); color:#fff; }
+  .c1-cnt:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .c1-pathwrap{ overflow-x:auto; padding:6px 2px 14px; }
+  .c1-path{ display:flex; align-items:flex-end; gap:8px; position:relative; padding-bottom:6px; }
+  .c1-path::before{ content:""; position:absolute; left:20px; right:20px; bottom:22px; height:6px; border-radius:3px;
+    background:repeating-linear-gradient(90deg,#C98A4B 0 10px,transparent 10px 18px); }
+  .c1-stone{ position:relative; flex:0 0 34px; width:34px; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .c1-stone .n{ font-size:12px; font-weight:700; color:#7A8F80; }
+  .c1-stone .bump{ width:36px; height:36px; border-radius:50%; background:#C9DACB; display:flex; align-items:center; justify-content:center; font-size:16px; transition:transform .3s; }
+  .c1-stone.done .bump{ background:#3FA34D; transform:scale(1.1); }
+  .c1-stone.cur .bump{ background:var(--gold); }
+  .c1-mascot{ position:absolute; bottom:30px; font-size:26px; transition:left .5s; }
+  .c1-q{ font-size:clamp(36px,10vw,52px); font-weight:800; text-align:center; margin:6px 0 14px; }
+  .c1-ans{ width:90px; height:62px; margin:0 auto 14px; border:3px solid var(--ink); border-radius:14px; background:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; }
+  .c1-ans.bad{ border-color:var(--coral); animation:c1shake .35s; }
+  @keyframes c1shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .c1-pad{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:300px; margin:0 auto 12px; }
+  .c1-key{ all:unset; cursor:pointer; box-sizing:border-box; text-align:center; font-size:22px; font-weight:700; padding:13px 0; border:2px solid var(--ink); border-radius:12px; background:#fff; }
+  .c1-key:active{ transform:scale(.94); }
+  .c1-key:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .c1-key.ok{ background:var(--teal); color:#fff; } .c1-key.del{ background:#FDECEA; }
+  .c1-fb{ min-height:26px; text-align:center; font-weight:700; }
+  .c1-fb.good{ color:#2E7D4F; } .c1-fb.bad{ color:#B3402F; }
+  .c1-bar{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:10px; font-weight:700; }
+  .c1-pill{ background:#fff; border:2px solid var(--ink); border-radius:999px; padding:4px 14px; font-variant-numeric:tabular-nums; }
+  .c1-board{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; }
+  .c1-bug{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .c1-bugbox{ position:relative; width:120px; height:120px; }
+  .c1-bugbox svg{ width:100%; height:100%; }
+  .c1-bugbox .eq{ position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.6); color:#fff; font-weight:800; padding:2px 8px; border-radius:8px; white-space:nowrap; font-size:.95rem; }
+  .c1-bugbox.sol{ animation:c1pop .4s; }
+  @keyframes c1pop{ 40%{ transform:scale(1.15) rotate(-4deg);} }
+  .c1-in{ width:80px; text-align:center; font-size:1.1rem; font-weight:700; padding:5px; border:2px solid var(--ink); border-radius:10px; }
+  .c1-in:disabled{ background:var(--gold); border-color:var(--gold); color:#3a2c1a; }
+  .c1-sel{ font-size:.95rem; padding:6px 10px; border:2px solid var(--ink); border-radius:10px; background:#fff; }
 
   /* Progress */
   .trail{ display:flex; gap:6px; margin-bottom:24px; }
@@ -246,6 +288,15 @@
   .banner .actions{ margin-top:10px; }
   .menu-actions{ margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; }
 
+  /* Fil d'Ariane */
+  .crumbs{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin:0 0 14px; font-size:0.92rem; }
+  .crumbs button{ all:unset; cursor:pointer; color:var(--teal-dark); font-weight:700; text-decoration:underline; padding:2px 4px; border-radius:4px; }
+  .crumbs button:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .crumbs .sep{ color:#7A7362; }
+  .crumbs .cur{ font-weight:700; color:var(--ink); padding:2px 4px; }
+  .crumbwarn{ margin:0 0 14px; padding:12px 14px; background:#FFF1DC; border:2px solid var(--coral); border-radius:12px; line-height:1.5; }
+  .crumbwarn .actions{ margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; }
+
   /* Nom et classement */
   .namefield{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
   .sumlist{ list-style:none; margin:14px 0 0; padding:0; text-align:left; font-size:0.98rem; line-height:1.9; }
@@ -282,12 +333,14 @@
 <div class="sheet">
   <div class="header">
     <div>
-      <h1 id="hTitle">Mathématique, 4e année</h1>
+      <h1 id="hTitle">Mathématique, 2e Cycle</h1>
       <p id="hSub">Résolution de problèmes</p>
     </div>
     <div class="badge" id="hBadge">Série du jour</div>
   </div>
 
+  <nav id="crumbs" class="crumbs" aria-label="Fil d’Ariane"></nav>
+  <div id="crumbWarn"></div>
   <div id="timebar" class="timebar" aria-live="off"></div>
   <div id="trail" class="trail" style="display:none"></div>
   <div id="view"></div>
@@ -1287,13 +1340,46 @@ let LB_UNSUB = null;
 function stopLb(){ if(LB_UNSUB){ try { LB_UNSUB(); } catch(e) {} LB_UNSUB = null; } }
 const timebarEl = document.getElementById('timebar');
 
+// ---------- Fil d'Ariane : retour à l'accueil, avec avertissement si une activité est en cours ----------
+const crumbsEl = document.getElementById('crumbs');
+const crumbWarnEl = document.getElementById('crumbWarn');
+let CRUMB_GUARD = false;
+function clearCrumbWarn(){ crumbWarnEl.innerHTML = ''; }
+// items : [{ label, fn }], le dernier est la page courante ; guard : une activité est en cours (la progression serait perdue)
+function setCrumbs(items, guard){
+  CRUMB_GUARD = !!guard;
+  clearCrumbWarn();
+  crumbsEl.innerHTML = '';
+  items.forEach((it, i) => {
+    if(i) { const sp = document.createElement('span'); sp.className = 'sep'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = '›'; crumbsEl.appendChild(sp); }
+    if(i === items.length - 1){
+      const c = document.createElement('span'); c.className = 'cur'; c.setAttribute('aria-current', 'page'); c.textContent = it.label; crumbsEl.appendChild(c);
+    } else {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = it.label;
+      b.addEventListener('click', () => leaveTo(it.fn));
+      crumbsEl.appendChild(b);
+    }
+  });
+}
+function leaveTo(fn){
+  if(!CRUMB_GUARD){ fn(); return; }
+  crumbWarnEl.innerHTML = `<div class="crumbwarn" role="alert"><strong>Attention !</strong> Si tu quittes maintenant, ta progression dans cette activité sera perdue.
+    <div class="actions"><button class="btn" id="cwLeave">Quitter quand même</button><button class="btn ghost" id="cwStay">Continuer l’activité</button></div></div>`;
+  document.getElementById('cwLeave').addEventListener('click', () => { CRUMB_GUARD = false; fn(); });
+  document.getElementById('cwStay').addEventListener('click', clearCrumbWarn);
+}
+const CR_HOME = () => ({ label:'Accueil', fn:showCycles });
+const CR_C2 = () => ({ label:'2e Cycle', fn:showMenu });
+const CR_C1 = () => ({ label:'1er Cycle', fn:showCycle1 });
+
 function showMenu(){
   mod = null;
   stopTicker(); stopLb();
   timebarEl.style.display = 'none';
   trailEl.style.display = 'none';
   setAccent('#2C7A73');
-  hTitle.textContent = 'Mathématique, 4e année';
+  setCrumbs([CR_HOME(), { label:'2e Cycle' }], false);
+  hTitle.textContent = 'Mathématique, 2e Cycle';
   hSub.textContent = 'Résolution de problèmes';
   hBadge.textContent = 'Série du jour';
 
@@ -1325,8 +1411,10 @@ function showMenu(){
     </button>`;
   });
   html += `</div><div class="menu-actions" id="menuActions"><button class="btn ghost" id="lbBtn">Voir le classement du jour</button>
-    <button class="btn ghost" id="newPupil">Nouvel élève</button></div>`;
+    <button class="btn ghost" id="newPupil">Nouvel élève</button>
+    <button class="btn ghost" id="homeBtn">← Choisir un autre cycle</button></div>`;
   viewEl.innerHTML = html;
+  document.getElementById('homeBtn').addEventListener('click', showCycles);
   viewEl.querySelectorAll('.mcard').forEach(b => {
     b.addEventListener('click', () => startModule(b.getAttribute('data-id')));
   });
@@ -1359,8 +1447,9 @@ function startModule(id){
   timebarEl.style.display = 'flex';
   updateClock(); startTicker();
   setAccent(mod.color);
+  setCrumbs([CR_HOME(), CR_C2(), { label:mod.title }], true);
   hTitle.textContent = mod.title;
-  hSub.textContent = 'Mathématique, 4e année';
+  hSub.textContent = 'Mathématique, 2e Cycle';
   hBadge.textContent = mod.questions.length + ' questions';
   renderQuestion();
 }
@@ -1492,6 +1581,7 @@ function renderFinal(){
   const total = mod.questions.length;
   const secs = elapsed();
   stopTicker();
+  setCrumbs([CR_HOME(), CR_C2(), { label:mod.title }], false);
   timebarEl.style.display = 'none';
   const wasPractice = practice;
   // Le score se calcule et se range seulement ici : la section est terminée à 100 %
@@ -1544,15 +1634,19 @@ function renderFinal(){
 }
 
 // Enregistrer d'un coup les scores des sections terminées mais pas encore inscrites
-function showLogAll(){
+function showLogAll(cycle){
+  cycle = cycle === 'c1' ? 'c1' : 'c2';
+  const MODS = cycle === 'c1' ? C1_MODS : modules;
+  const goBack = cycle === 'c1' ? showCycle1 : showMenu;
   stopTicker(); stopLb();
   timebarEl.style.display = 'none';
   trailEl.style.display = 'none';
-  setAccent('#2C7A73');
+  setAccent(cycle === 'c1' ? '#E2402C' : '#2C7A73');
+  setCrumbs([CR_HOME(), cycle === 'c1' ? CR_C1() : CR_C2(), { label:'Enregistrer mes scores' }], false);
   hTitle.textContent = 'Enregistrer mes scores';
-  hSub.textContent = 'Mathématique, 4e année';
+  hSub.textContent = cycle === 'c1' ? 'Mathématique, 1er Cycle' : 'Mathématique, 2e Cycle';
   hBadge.textContent = 'Série du jour';
-  const todo = modules.filter(m => saved.scores[m.id] && !saved.scores[m.id].logged);
+  const todo = MODS.filter(m => saved.scores[m.id] && !saved.scores[m.id].logged);
   let items = '';
   todo.forEach(m => {
     const x = saved.scores[m.id];
@@ -1565,38 +1659,46 @@ function showLogAll(){
     ${nameRow('', 'Enregistrer')}
     <div class="actions"><button class="btn ghost" id="backMenu">Retour au menu</button></div>
   </div>`;
-  document.getElementById('backMenu').addEventListener('click', showMenu);
-  wireNameForm(todo.map(m => m.id), showLeaderboard);
+  document.getElementById('backMenu').addEventListener('click', goBack);
+  wireNameForm(todo.map(m => m.id), () => showLeaderboard(cycle));
 }
 
 let lbTab = 'total';
-const SHORT = { exam:'Examen', time:'Heure', money:'Monnaie', fractions:'Fractions' };
-function showLeaderboard(){
+const SHORT = { exam:'Examen', time:'Heure', money:'Monnaie', fractions:'Fractions', mimi:'Mimi', dash:'Coccinelles' };
+const C1_MODS = [ { id:'mimi', title:'Le chemin de Mimi' }, { id:'dash', title:'Course des coccinelles' } ];
+function showLeaderboard(cycle){
+  cycle = cycle === 'c1' ? 'c1' : 'c2';
+  const MODS = cycle === 'c1' ? C1_MODS : modules;
+  const idset = MODS.map(m => m.id);
+  const keep = rs => rs.filter(r => idset.indexOf(r.section) >= 0);
+  const goBack = cycle === 'c1' ? showCycle1 : showMenu;
+  if(lbTab !== 'total' && idset.indexOf(lbTab) < 0) lbTab = 'total';
   stopTicker(); stopLb();
   timebarEl.style.display = 'none';
   trailEl.style.display = 'none';
-  setAccent('#2C7A73');
+  setAccent(cycle === 'c1' ? '#E2402C' : '#2C7A73');
+  setCrumbs([CR_HOME(), cycle === 'c1' ? CR_C1() : CR_C2(), { label:'Classement du jour' }], false);
   hTitle.textContent = 'Classement du jour';
-  hSub.textContent = 'Mathématique, 4e année';
+  hSub.textContent = cycle === 'c1' ? 'Mathématique, 1er Cycle' : 'Mathématique, 2e Cycle';
   hBadge.textContent = 'Série du jour';
   let tabs = `<button data-t="total">Total</button>`;
-  modules.forEach(m => { tabs += `<button data-t="${m.id}">${SHORT[m.id]}</button>`; });
+  MODS.forEach(m => { tabs += `<button data-t="${m.id}">${SHORT[m.id]}</button>`; });
   viewEl.innerHTML = `<div class="card">
     <div class="lbhead"><h2>${dayLabel(DAY)}</h2></div>
     <div class="sorts" id="lbTabs">${tabs}</div>
     <div id="lbRows" style="margin-top:12px"></div>
-    <div class="lbnote" id="lbFormula">Score = 5 points × questions réussies du premier coup × bonus de vitesse (×2 à 2 min 30 s ou moins, ×1 à 5 min, ×0,5 à 10 min ou plus).</div>
+    <div class="lbnote" id="lbFormula">${cycle === 'c1' ? 'Score = 5 points × questions réussies du premier coup × bonus de vitesse (calculé pour 10 questions : ×2 à 2 min 30 s ou moins, ×1 à 5 min, ×0,5 à 10 min ou plus).' : 'Score = 5 points × questions réussies du premier coup × bonus de vitesse (×2 à 2 min 30 s ou moins, ×1 à 5 min, ×0,5 à 10 min ou plus).'}</div>
     <div class="lbnote" id="lbNote"></div>
     <div class="actions"><button class="btn" id="lbBack">Retour au menu</button></div>
   </div>`;
-  let rows = localRows().map(r => normRow(r.id, r));
+  let rows = keep(localRows().map(r => normRow(r.id, r)));
   let sharedBoard = false;
   const note = document.getElementById('lbNote');
   function paintNote(){
     let t = sharedBoard
       ? 'Classement partagé : on y voit tous les élèves qui ont enregistré un score aujourd\'hui.'
       : 'Classement de cet appareil seulement.';
-    const miss = modules.filter(m => saved.scores[m.id] && saved.scores[m.id].logged && !saved.scores[m.id].shared).length;
+    const miss = MODS.filter(m => saved.scores[m.id] && saved.scores[m.id].logged && !saved.scores[m.id].shared).length;
     if(miss) t += ' ' + (miss === 1 ? '1 de tes scores est enregistré ici, mais n\'a' : miss + ' de tes scores sont enregistrés ici, mais n\'ont') + ' pas pu être partagé' + (miss === 1 ? '' : 's') + ' avec la classe.';
     note.textContent = t;
   }
@@ -1634,28 +1736,320 @@ function showLeaderboard(){
       const c0 = tr.insertCell(); c0.className = 'rk'; c0.textContent = i < 3 ? medal[i] : String(i + 1);
       tr.insertCell().textContent = r.name;
       const c2 = tr.insertCell(); c2.className = 'r'; c2.textContent = r.score + ' pts';
-      if(lbTab === 'total'){ const c = tr.insertCell(); c.className = 'r'; c.textContent = r.n + ' / ' + modules.length; }
+      if(lbTab === 'total'){ const c = tr.insertCell(); c.className = 'r'; c.textContent = r.n + ' / ' + MODS.length; }
       const c3 = tr.insertCell(); c3.className = 'r'; c3.textContent = fmt(r.seconds);
     });
     box.appendChild(tbl);
   }
   document.querySelectorAll('#lbTabs button').forEach(b => b.addEventListener('click', () => { lbTab = b.getAttribute('data-t'); paintRows(); }));
-  document.getElementById('lbBack').addEventListener('click', showMenu);
+  document.getElementById('lbBack').addEventListener('click', goBack);
   paintRows(); paintNote();
   if(DB){
     try {
       LB_UNSUB = DB.collection('leaderboard').where('day', '==', DAY).limit(1000).onSnapshot(snap => {
         sharedBoard = true;
-        rows = snap.docs.map(d => normRow(d.id, d.data())).filter(r => r.section);
+        rows = keep(snap.docs.map(d => normRow(d.id, d.data())).filter(r => r.section));
         // Scores non partagés : on les garde visibles (surlignés) pour que l'élève les retrouve
-        localRows().forEach(r => { if(r.shared === false && r.pid === saved.pid && !rows.some(x => x.id === r.id)) rows.push(normRow(r.id, r)); });
+        keep(localRows().map(r => normRow(r.id, r))).forEach(r => { if(r.shared === false && r.pid === saved.pid && !rows.some(x => x.id === r.id)) rows.push(r); });
         paintRows(); paintNote();
-      }, () => { sharedBoard = false; rows = localRows().map(r => normRow(r.id, r)); paintRows(); paintNote(); });
+      }, () => { sharedBoard = false; rows = keep(localRows().map(r => normRow(r.id, r))); paintRows(); paintNote(); });
     } catch(e) { LB_UNSUB = null; }
   }
 }
 
-showMenu();
+// ====== Accueil : choix du cycle ======
+function showCycles(){
+  mod = null;
+  stopTicker(); stopLb(); c1Stop();
+  timebarEl.style.display = 'none';
+  trailEl.style.display = 'none';
+  setAccent('#2C7A73');
+  setCrumbs([{ label:'Accueil' }], false);
+  hTitle.textContent = 'Mathématique';
+  hSub.textContent = 'Choisis ton cycle';
+  hBadge.textContent = 'Primaire';
+  const n = doneCount();
+  viewEl.innerHTML = `<p class="menu-intro">Choisis ton cycle pour commencer à t’entraîner.</p>
+    <div class="menu">
+      <button class="mcard" id="goC1" style="--accent:#E2402C"><div class="micon">🐞</div>
+        <div><div class="mtitle">Mathématique, 1er Cycle</div><div class="mdesc">1re et 2e année : additions, soustractions et jeux de coccinelles</div></div></button>
+      <button class="mcard${n === modules.length ? ' done' : ''}" id="goC2" style="--accent:#2C7A73"><div class="micon">🧮</div>
+        <div><div class="mtitle">Mathématique, 2e Cycle</div><div class="mdesc">3e et 4e année : problèmes, heure, monnaie et fractions</div>
+        <div class="mscore">${n} sur ${modules.length} sections terminées</div></div></button>
+    </div>`;
+  document.getElementById('goC1').addEventListener('click', showCycle1);
+  document.getElementById('goC2').addEventListener('click', showMenu);
+}
+
+// ====== 1er cycle : jeux de coccinelles ======
+let C1_TIMER = null;
+function c1Stop(){ if(C1_TIMER){ clearInterval(C1_TIMER); C1_TIMER = null; } }
+function c1Int(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function c1Add(min,max){ const sum = c1Int(min,max), a = c1Int(0,sum); return { text:a+' + '+(sum-a), answer:sum }; }
+function c1Sub(min,max){ const m = c1Int(min,max), t = c1Int(0,m); return { text:m+' − '+t, answer:m-t }; }
+const C1_TIERS = [
+  () => c1Add(3,10), () => c1Add(3,10), () => c1Sub(3,10), () => c1Sub(3,10),
+  () => c1Add(11,20), () => c1Sub(11,20), () => c1Add(11,20), () => c1Sub(11,20),
+  () => (Math.random()<0.5 ? c1Add(11,20) : c1Sub(11,20)), () => (Math.random()<0.5 ? c1Add(11,20) : c1Sub(11,20))
+];
+function c1Questions(count){
+  const used = new Set(), out = [];
+  for(let i=0;i<count;i++){
+    let q, t = 0;
+    do { q = C1_TIERS[i % C1_TIERS.length](); t++; } while(used.has(q.text) && t < 8);
+    used.add(q.text); out.push(q);
+  }
+  return out;
+}
+function c1Clock(sec){ return String(Math.floor(sec/60)).padStart(2,'0') + ':' + String(sec%60).padStart(2,'0'); }
+
+function showCycle1(){
+  mod = null;
+  stopTicker(); stopLb(); c1Stop();
+  timebarEl.style.display = 'none';
+  trailEl.style.display = 'none';
+  setAccent('#E2402C');
+  setCrumbs([CR_HOME(), { label:'1er Cycle' }], false);
+  hTitle.textContent = 'Mathématique, 1er Cycle';
+  hSub.textContent = 'Jeux de coccinelles';
+  hBadge.textContent = 'Pratique libre';
+  const T = c1Totals();
+  let html = `<p class="menu-intro">Choisis un jeu. Termine-le au complet pour obtenir un score, puis inscris ton nom au classement.</p>
+    <div class="totalbox">
+      <div><div class="tlabel">Temps total</div><div class="tval">${fmt(T.t)}</div></div>
+      <div><div class="tlabel">Score total</div><div class="tval">${T.p} pts</div></div>
+      <div class="tcount">${T.n} sur ${C1_MODS.length} jeux terminés</div></div>`;
+  if(T.unl.length){
+    html += `<div class="banner"><strong>${T.n === C1_MODS.length ? 'Les 2 jeux sont terminés ! ' : ''}${T.unl.length === 1 ? 'Tu as 1 score à enregistrer.' : 'Tu as ' + T.unl.length + ' scores à enregistrer.'}</strong>
+      <div class="actions"><button class="btn" id="c1LogAll">Enregistrer ${T.unl.length === 1 ? 'mon score' : 'mes scores'}</button></div></div>`;
+  } else if(T.n === C1_MODS.length){
+    html += `<div class="banner"><strong>Les 2 jeux sont terminés !</strong> Score total : ${T.p} pts.
+      <div class="actions"><button class="btn" id="c1SeeLb">Voir le classement</button></div></div>`;
+  }
+  const GAMES = [
+    { id:'mimi', color:'#3FA34D', icon:'🐞', title:'Le chemin de Mimi la coccinelle', desc:'Additions et soustractions jusqu’à 20. Une question à la fois : il faut trouver la bonne réponse pour avancer.' },
+    { id:'dash', color:'#E2402C', icon:'⚡', title:'Course des coccinelles', desc:'Multiplications et divisions (tables de 0 à 12) : résous toutes les coccinelles le plus vite possible.' }
+  ];
+  html += '<div class="menu">';
+  GAMES.forEach(g => {
+    const sc = saved.scores[g.id];
+    const score = sc ? `<div class="mscore">Terminé : ${sc.firstTry} sur ${sc.total} du premier coup · ${fmt(sc.seconds)} · ${sc.points} pts${sc.logged ? ' · enregistré' : ''}</div>` : '';
+    const mark = sc ? `<span class="check ok" role="img" aria-label="Jeu terminé">${CHECK_SVG}</span>` : `<span class="check todo" role="img" aria-label="Jeu à faire"></span>`;
+    html += `<button class="mcard${sc ? ' done' : ''}" data-g="${g.id}" style="--accent:${g.color}"><div class="micon">${g.icon}</div>
+      <div><div class="mtitle">${g.title}</div><div class="mdesc">${g.desc}</div>${score}</div>${mark}</button>`;
+  });
+  html += `</div><div class="menu-actions" id="c1Actions"><button class="btn ghost" id="c1Lb">Voir le classement du jour</button>
+    <button class="btn ghost" id="c1New">Nouvel élève</button>
+    <button class="btn ghost" id="c1Home">← Choisir un autre cycle</button></div>`;
+  viewEl.innerHTML = html;
+  viewEl.querySelectorAll('.mcard').forEach(b => b.addEventListener('click', () => {
+    if(b.getAttribute('data-g') === 'mimi') c1Mimi(10); else c1Dash('both', 10);
+  }));
+  document.getElementById('c1Lb').addEventListener('click', () => showLeaderboard('c1'));
+  const la = document.getElementById('c1LogAll'); if(la) la.addEventListener('click', () => showLogAll('c1'));
+  const sl = document.getElementById('c1SeeLb'); if(sl) sl.addEventListener('click', () => showLeaderboard('c1'));
+  document.getElementById('c1Home').addEventListener('click', showCycles);
+  document.getElementById('c1New').addEventListener('click', () => {
+    document.getElementById('c1Actions').innerHTML = `<p class="lbnote">Effacer la progression de cet appareil pour accueillir un nouvel élève ? Les scores déjà enregistrés restent au classement.</p>
+      <button class="btn" id="newYes">Oui, nouvel élève</button> <button class="btn ghost" id="newNo">Annuler</button>`;
+    document.getElementById('newNo').addEventListener('click', showCycle1);
+    document.getElementById('newYes').addEventListener('click', () => { saved = { day:DAY, scores:{}, pid:'', name:'' }; persist(); showCycle1(); });
+  });
+}
+
+function c1Totals(){
+  let n = 0, t = 0, p = 0; const unl = [];
+  C1_MODS.forEach(m => { const x = saved.scores[m.id]; if(x){ n++; t += x.seconds || 0; p += x.points || 0; if(!x.logged) unl.push(m); } });
+  return { n:n, t:t, p:p, unl:unl };
+}
+// Vitesse ramenée à 10 questions, pour que 10, 20, 50 ou 100 questions restent comparables
+function c1Points(ft, sec, total){ return Math.round(5 * ft * speedBonus(sec * 10 / Math.max(1, total))); }
+// Écran de fin commun : calcule et range le score (seulement à 100 %), puis propose l'enregistrement
+function c1Result(id, ft, total, secs, box, onAgain){
+  CRUMB_GUARD = false;
+  const wasPractice = !!saved.scores[id];
+  let body;
+  if(wasPractice){
+    body = `<div class="score-pill">⏱ ${fmt(secs)} · pratique</div><p>Ton score et ton temps du jour pour ce jeu ne changent pas.</p>`;
+  } else {
+    const pts = c1Points(ft, secs, total);
+    saved.scores[id] = { firstTry:ft, total:total, seconds:secs, points:pts, logged:false, shared:false };
+    persist();
+    body = `<div class="score-pill">⭐ ${pts} pts · ⏱ ${fmt(secs)}</div>
+      <p class="calc">5 pts × ${ft} réussies du premier coup = ${5 * ft} · bonus de vitesse ${bonusStr(secs * 10 / Math.max(1, total))} (vitesse calculée pour 10 questions)</p>
+      <div class="logbox" id="logBox"><p>Enregistre ton score au classement :</p>${nameRow('', 'Enregistrer mon score')}</div>`;
+  }
+  box.innerHTML = `<div class="card final"><h2>Jeu terminé</h2>${body}
+    <div class="actions"><button class="btn" id="c1Again">Rejouer</button> <button class="btn ghost" id="c1ToGames">Retour aux jeux</button></div></div>`;
+  document.getElementById('c1Again').addEventListener('click', onAgain);
+  document.getElementById('c1ToGames').addEventListener('click', showCycle1);
+  if(!wasPractice){
+    wireNameForm([id], () => {
+      const lb = document.getElementById('logBox'); if(!lb) return;
+      lb.innerHTML = `<p>✔ Score enregistré au classement.</p><div class="actions"><button class="btn" id="seeLb1">Voir le classement</button></div>`;
+      document.getElementById('seeLb1').addEventListener('click', () => showLeaderboard('c1'));
+    });
+  }
+}
+
+function c1Mimi(count){
+  c1Stop();
+  setCrumbs([CR_HOME(), CR_C1(), { label:'Le chemin de Mimi' }], true);
+  hTitle.textContent = 'Le chemin de Mimi';
+  hSub.textContent = 'Mathématique, 1er Cycle';
+  hBadge.textContent = count + ' questions';
+  const qs = c1Questions(count);
+  let cur = 0, entry = '', sec = 0, locked = false, firstN = 0, missed = false;
+  const solved = qs.map(() => false);
+  viewEl.innerHTML = `<div class="c1-set"><b>Nombre de questions :</b>
+      ${[10,20,50,100].map(c => `<button class="c1-cnt${c===count?' on':''}" data-c="${c}">${c}</button>`).join('')}</div>
+    <div class="c1-pathwrap"><div class="c1-path" id="c1Path" style="width:${Math.max(560, qs.length*42)}px"></div></div>
+    <div id="c1Card">
+      <div class="c1-bar"><span class="c1-pill" id="c1Prog"></span><span class="c1-pill" id="c1Time">⏱ 00:00</span></div>
+      <div class="c1-q" id="c1Q"></div>
+      <div class="c1-ans" id="c1A">&nbsp;</div>
+      <div class="c1-pad" id="c1Pad"></div>
+      <div class="c1-fb" id="c1Fb" aria-live="polite">&nbsp;</div>
+    </div>
+    <div class="menu-actions"><button class="btn ghost" id="c1Back">← Retour aux jeux</button></div>`;
+  const pathEl = document.getElementById('c1Path'), qEl = document.getElementById('c1Q'), aEl = document.getElementById('c1A'),
+        fbEl = document.getElementById('c1Fb'), progEl = document.getElementById('c1Prog'), timeEl = document.getElementById('c1Time'),
+        padEl = document.getElementById('c1Pad'), cardEl = document.getElementById('c1Card');
+  qs.forEach((q,i) => {
+    const st = document.createElement('div'); st.className = 'c1-stone'; st.id = 'c1s' + i;
+    st.innerHTML = `<div class="n">${i+1}</div><div class="bump"></div>`; pathEl.appendChild(st);
+  });
+  const mascot = document.createElement('div'); mascot.className = 'c1-mascot'; mascot.textContent = '🐞'; pathEl.appendChild(mascot);
+  function paint(){
+    qs.forEach((q,i) => {
+      const st = document.getElementById('c1s' + i);
+      st.classList.toggle('done', solved[i]); st.classList.toggle('cur', i === cur && !solved[i]);
+      st.querySelector('.bump').textContent = solved[i] ? '🌸' : '';
+    });
+    const st = document.getElementById('c1s' + Math.min(cur, qs.length-1));
+    if(st) mascot.style.left = (st.offsetLeft + st.offsetWidth/2 - 13) + 'px';
+  }
+  function load(){
+    qEl.textContent = qs[cur].text + ' = ?';
+    progEl.textContent = 'Question ' + (cur+1) + ' sur ' + qs.length;
+    paint();
+  }
+  function key(k){
+    if(locked) return;
+    if(k === 'del') entry = entry.slice(0,-1);
+    else if(k === 'ok'){ check(); return; }
+    else if(entry.length < 2) entry += k;
+    aEl.textContent = entry || ' '; aEl.classList.remove('bad');
+  }
+  function done(){
+    c1Stop();
+    cardEl.innerHTML = `<div class="c1-q" style="font-size:1.6rem">Mimi a traversé le jardin ! 🎉</div>
+      <p style="text-align:center;font-size:2rem;letter-spacing:6px;margin:8px 0">🌼🌸🌷🌻🌹</p><div id="c1End"></div>`;
+    c1Result('mimi', firstN, qs.length, sec, document.getElementById('c1End'), () => c1Mimi(count));
+  }
+  function check(){
+    if(entry === ''){ fbEl.textContent = 'Écris d’abord un nombre !'; fbEl.className = 'c1-fb bad'; return; }
+    if(parseInt(entry,10) === qs[cur].answer){
+      solved[cur] = true; locked = true; if(!missed) firstN++; missed = false;
+      fbEl.textContent = 'Bravo ! 🌟 Une fleur de plus dans le jardin !'; fbEl.className = 'c1-fb good';
+      paint();
+      setTimeout(() => {
+        cur++; entry = ''; locked = false;
+        if(cur >= qs.length){ paint(); done(); return; }
+        aEl.textContent = ' '; fbEl.innerHTML = '&nbsp;'; fbEl.className = 'c1-fb'; load();
+      }, 650);
+    } else {
+      fbEl.textContent = 'Pas tout à fait — essaie encore !'; fbEl.className = 'c1-fb bad';
+      aEl.classList.add('bad'); entry = ''; missed = true;
+      setTimeout(() => { if(!locked){ aEl.textContent = ' '; } }, 350);
+    }
+  }
+  ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.className = 'c1-key' + (k==='ok' ? ' ok' : k==='del' ? ' del' : '');
+    b.textContent = k==='ok' ? '✓' : k==='del' ? '⌫' : k;
+    b.setAttribute('aria-label', k==='ok' ? 'Valider' : k==='del' ? 'Effacer' : k);
+    b.addEventListener('click', () => key(k)); padEl.appendChild(b);
+  });
+  viewEl.querySelectorAll('.c1-cnt').forEach(b => b.addEventListener('click', () => c1Mimi(parseInt(b.getAttribute('data-c'),10))));
+  document.getElementById('c1Back').addEventListener('click', () => leaveTo(showCycle1));
+  load();
+  C1_TIMER = setInterval(() => { sec++; timeEl.textContent = '⏱ ' + c1Clock(sec); }, 1000);
+}
+
+function c1BugSVG(shell, spots){
+  const sp = spots.map(s => `<circle cx="${s.x}" cy="${s.y}" r="${s.r}" fill="#232323"/>`).join('');
+  return `<svg viewBox="0 0 140 140" aria-hidden="true"><ellipse cx="70" cy="75" rx="48" ry="42" fill="#232323"/>
+    <path d="M70 33C42 33 22 55 22 78C22 108 44 128 70 128C96 128 118 108 118 78C118 55 98 33 70 33Z" fill="${shell}"/>
+    <line x1="70" y1="33" x2="70" y2="128" stroke="#1c1c1c" stroke-width="3"/>${sp}
+    <circle cx="70" cy="28" r="18" fill="#232323"/><circle cx="63" cy="24" r="3" fill="#fff"/><circle cx="77" cy="24" r="3" fill="#fff"/>
+    <line x1="60" y1="14" x2="52" y2="4" stroke="#1c1c1c" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="80" y1="14" x2="88" y2="4" stroke="#1c1c1c" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+}
+function c1Equation(mode){
+  const div = mode === 'div' || (mode === 'both' && Math.random() < 0.5);
+  if(div){ const d = c1Int(1,12), q = c1Int(0,12); return { text:(d*q) + ' ÷ ' + d, answer:q }; }
+  const a = c1Int(0,12), b = c1Int(0,12); return { text:a + ' × ' + b, answer:a*b };
+}
+function c1Dash(mode, count){
+  c1Stop();
+  setCrumbs([CR_HOME(), CR_C1(), { label:'Course des coccinelles' }], true);
+  hTitle.textContent = 'Course des coccinelles';
+  hSub.textContent = 'Mathématique, 1er Cycle';
+  hBadge.textContent = count + ' coccinelles';
+  const SHELLS = ['#e2402c','#f2612b','#d63b6f','#e07a1c','#c9302c'];
+  let solvedN = 0, ms = 0, t0 = null, firstN = 0;
+  viewEl.innerHTML = `<div class="c1-bar"><span class="c1-pill" id="dTime">⏱ 0,0 s</span><span class="c1-pill" id="dCnt">0 sur ${count}</span>
+      <select class="c1-sel" id="dMode" aria-label="Opérations">
+        <option value="both"${mode==='both'?' selected':''}>× et ÷</option><option value="mult"${mode==='mult'?' selected':''}>× seulement</option><option value="div"${mode==='div'?' selected':''}>÷ seulement</option></select>
+      <select class="c1-sel" id="dNum" aria-label="Nombre de coccinelles">
+        ${[6,10,16,20,50,100].map(c => `<option value="${c}"${c===count?' selected':''}>${c} coccinelles</option>`).join('')}</select>
+      <button class="btn" id="dNew">Nouvelle partie</button></div>
+    <div class="c1-board" id="dBoard"></div><div id="dEnd"></div>
+    <div class="menu-actions"><button class="btn ghost" id="c1Back">← Retour aux jeux</button></div>`;
+  const board = document.getElementById('dBoard'), timeEl = document.getElementById('dTime'), cntEl = document.getElementById('dCnt');
+  function start(){
+    if(C1_TIMER) return;
+    t0 = Date.now() - ms;
+    C1_TIMER = setInterval(() => { ms = Date.now() - t0; timeEl.textContent = '⏱ ' + (ms/1000).toFixed(1).replace('.',',') + ' s'; }, 100);
+  }
+  function finish(){
+    c1Stop();
+    let best = null; try { best = parseFloat(localStorage.getItem('c1-dash-best')); } catch(e) {}
+    const secs = Math.round(ms/100)/10;
+    let line;
+    if(!(best > 0) || secs < best){ line = '🏆 Nouveau meilleur temps !'; try { localStorage.setItem('c1-dash-best', String(secs)); } catch(e) {} }
+    else line = 'Meilleur temps : ' + String(best).replace('.',',') + ' s';
+    const end = document.getElementById('dEnd');
+    c1Result('dash', firstN, count, Math.round(ms/1000), end, () => c1Dash(document.getElementById('dMode').value, count));
+    end.insertAdjacentHTML('afterbegin', `<p class="lbnote" style="text-align:center">${line}</p>`);
+  }
+  for(let i=0;i<count;i++){
+    const eq = c1Equation(mode);
+    const spots = Array.from({length:c1Int(3,6)}, () => ({ x:c1Int(35,105), y:c1Int(55,115), r:c1Int(5,9) }));
+    const wrap = document.createElement('div'); wrap.className = 'c1-bug';
+    wrap.innerHTML = `<div class="c1-bugbox">${c1BugSVG(SHELLS[i % SHELLS.length], spots)}<div class="eq">${eq.text} = ?</div></div>
+      <input class="c1-in" type="number" inputmode="numeric" placeholder="?" aria-label="Réponse : ${eq.text}">`;
+    const inp = wrap.querySelector('input'), box = wrap.querySelector('.c1-bugbox'); let bad = false;
+    inp.addEventListener('focus', start);
+    const test = () => {
+      const v = inp.value.trim(); if(v === '' || inp.disabled) return;
+      if(Number(v) === eq.answer){
+        inp.disabled = true; box.classList.add('sol'); solvedN++; if(!bad) firstN++; cntEl.textContent = solvedN + ' sur ' + count;
+        if(solvedN >= count) finish();
+      } else if(v.length >= String(eq.answer).length){ bad = true; }
+    };
+    inp.addEventListener('input', test);
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter') test(); });
+    board.appendChild(wrap);
+  }
+  document.getElementById('dMode').addEventListener('change', e => c1Dash(e.target.value, count));
+  document.getElementById('dNum').addEventListener('change', e => c1Dash(document.getElementById('dMode').value, parseInt(e.target.value,10)));
+  document.getElementById('dNew').addEventListener('click', () => c1Dash(document.getElementById('dMode').value, count));
+  document.getElementById('c1Back').addEventListener('click', () => leaveTo(showCycle1));
+}
+
+showCycles();
 </script>
 
 </body>
