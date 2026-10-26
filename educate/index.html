@@ -162,6 +162,11 @@
   .visual{ display:flex; justify-content:center; margin:0 0 18px; }
 
   .answer-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .clockfields{ display:grid; gap:12px; }
+  .clockfields .cf span{ display:block; font-weight:700; font-size:0.92rem; margin-bottom:4px; }
+  .clockfields .cf input{ width:100%; max-width:260px; }
+  .clockfields input.good{ border-color:#2E9E5B; background:#EAF7EF; }
+  .clockfields input.bad{ border-color:var(--coral); }
   input[type="text"]{
     flex:1; min-width:150px;
     font-family:'Courier New', Consolas, monospace;
@@ -635,24 +640,39 @@ function stepsSub(s, d){
   return out.join(', puis ');
 }
 
-function clockQ(R, used, mins){
+// Heure en format 24 h : avant midi (0 h à 11 h) ou après midi (12 h à 23 h)
+function to24(h, pm){ return pm ? (h === 12 ? 12 : h + 12) : (h === 12 ? 0 : h); }
+
+function clockQ(R, used){
   let h, m, key, tries = 0;
-  do { h = R.int(1, 12); m = R.pick(mins); key = h + ':' + m; tries++; } while(used.has(key) && tries < 60);
+  do { h = R.int(1, 12); m = R.int(0, 59); key = h + ':' + m; tries++; } while(used.has(key) && tries < 80);
   used.add(key);
-  const big = m / 5, next = h % 12 + 1;
-  const base = `Chaque nombre de l'horloge vaut 5 minutes pour la grande aiguille. Compte de 5 en 5 à partir du 12.`;
-  const hint = m === 0 ? `Quand la grande aiguille est sur le 12, c'est une heure pile.`
+  const big = Math.floor(m / 5), rest = m % 5, next = h % 12 + 1;
+  const base = `Chaque nombre de l'horloge vaut 5 minutes pour la grande aiguille. Compte de 5 en 5 à partir du 12.`
+    + (rest ? ` Entre deux nombres, chaque petit trait vaut 1 minute.` : '');
+  const hint0 = m === 0 ? `Quand la grande aiguille est sur le 12, c'est une heure pile.`
              : m === 30 ? `Quand la grande aiguille est sur le 6, elle a fait la moitié du tour.`
              : m >= 45 ? base + ` Attention : quand les minutes approchent de l'heure suivante, la petite aiguille est tout près du chiffre suivant, mais elle ne l'a pas encore atteint. L'heure est celle que la petite aiguille vient de passer.`
              : m <= 10 ? base + ` Attention : la petite aiguille vient tout juste de dépasser le chiffre de l'heure.`
              : base;
-  const explain = m === 0
-    ? `La grande aiguille est sur le 12 : c'est une heure pile. La petite aiguille est sur le ${h}. Il est ${h}${NB}h${NB}00.`
-    : `La grande aiguille est sur le ${big} : ${big} × 5 = ${m} minutes. La petite aiguille a dépassé le ${h} sans arriver au ${next}. Il est ${h}${NB}h${NB}${pad(m)}.`;
+  const hint = hint0 + ` Ensuite, pense au format 24 h : après midi, on ajoute 12 heures à l'heure du matin (par exemple, 1 h du matin devient 13 h).`;
+  let minutesLine;
+  if(m === 0) minutesLine = `La grande aiguille est sur le 12 : c'est une heure pile.`;
+  else if(rest === 0) minutesLine = `La grande aiguille est sur le ${big} : ${big} × 5 = ${m} minutes.`;
+  else minutesLine = big === 0
+    ? `La grande aiguille a dépassé le 12 de ${rest} petit${rest > 1 ? 's' : ''} trait${rest > 1 ? 's' : ''} : ${m} minute${m > 1 ? 's' : ''}.`
+    : `La grande aiguille a dépassé le ${big} (${big} × 5 = ${big * 5} minutes) de ${rest} petit${rest > 1 ? 's' : ''} trait${rest > 1 ? 's' : ''} : ${big * 5} + ${rest} = ${m} minutes.`;
+  const am24 = to24(h, false), pm24 = to24(h, true), mm = pad(m);
+  const periods = h === 12
+    ? `Avant midi (juste après minuit), il est ${am24}${NB}h${NB}${mm}. Après midi, il est ${pm24}${NB}h${NB}${mm}.`
+    : `Avant midi, il est ${h}${NB}h${NB}${mm}. Après midi, on ajoute 12 heures : ${h} + 12 = ${pm24}, donc il est ${pm24}${NB}h${NB}${mm}.`;
+  const explain = `${minutesLine} ${m === 0 ? `La petite aiguille est sur le ${h}.` : `La petite aiguille a dépassé le ${h} sans arriver au ${next}.`} ${periods}`;
+  // Exemples de format : jamais la bonne heure
+  const exH = [7, 9, 10, 11].filter(x => x !== h)[0], exM = pad((m + 20) % 60 || 15);
   return {
-    type:'time', mod12:true, answer:[h, m], visual:clockSVG(h, m),
-    text:R.pick([`Regarde bien l'horloge. Quelle heure indique-t-elle${Q}`, `Quelle heure est-il sur cette horloge${Q}`, `Quelle heure montre cette horloge${Q}`]),
-    hint, explain, phs:['ex. : 8h25', 'ex. : 6h40']
+    type:'clock', mod12:true, answer:[h, m], visual:clockSVG(h, m),
+    text:`${R.pick([`Regarde bien l'horloge. Quelle heure indique-t-elle${Q}`, `Quelle heure est-il sur cette horloge${Q}`, `Quelle heure montre cette horloge${Q}`])} On ne voit pas si c'est le matin ou l'après-midi : écris les deux possibilités en format 24 h, l'heure d'avant midi dans la première case et l'heure d'après midi dans la deuxième.`,
+    hint, explain, phs24:[`ex. : ${exH}h${exM}`, `ex. : ${exH + 12}h${exM}`]
   };
 }
 
@@ -760,8 +780,7 @@ function tMixWalk(R){
 }
 function buildTime(R){
   const used = new Set();
-  const groups = R.shuffle([[0, 15, 30, 45], [5, 10, 20, 25, 35, 40, 50, 55], [0, 15, 30, 45], [5, 10, 20, 25, 35, 40, 50, 55]]);
-  const clocks = groups.map(g => clockQ(R, used, g));
+  const clocks = [0, 1, 2, 3].map(() => clockQ(R, used));
   const adds = R.shuffle([tAddDelay, tAddEvent]).map(g => g(R));
   const subs = R.shuffle([tSubDepart, R.pick([tSubTrip, tElapsed])]).map(g => g(R));
   const mixes = R.shuffle([tMixTrain, tMixShow, tMixWalk]).slice(0, 2).map(g => g(R));
@@ -1132,29 +1151,62 @@ function parseTime(s){
   let t = String(s).toLowerCase().replace(SPACES, '');
   // Mention facultative : am, a.m., pm, p.m., du matin, de l'après-midi, du soir
   let suf = null;
-  const sm = t.match(/(a\.?m\.?|p\.?m\.?|(?:du|de)?matin|(?:du)?soir|(?:de)?l'?apr[eè]s-?midi)$/);
+  const sm = t.match(/(avant-?(?:le)?midi|(?:de)?(?:l')?apr[eèé]s-?(?:le)?midi|a\.?m\.?|p\.?m\.?|(?:du|de)?matin|(?:du)?soir)$/);
+  let word = false;
   if(sm){
-    suf = /matin|^a\.?m/.test(sm[1]) ? 'am' : 'pm';
+    suf = /matin|avant|^a\.?m/.test(sm[1]) ? 'am' : 'pm';
+    word = /midi/.test(sm[1]);
     t = t.slice(0, t.length - sm[1].length);
   }
   t = t.replace(/minutes?|min/g, '').replace(/heures?/g, 'h');
   let m = t.match(/^(\d{1,2})(?:[h:](\d{0,2}))?$/);
   if(m){
     const mins = m[2] ? parseInt(m[2], 10) : 0;
-    return mins < 60 ? [parseInt(m[1], 10), mins, suf] : null;
+    return mins < 60 ? [parseInt(m[1], 10), mins, suf, word] : null;
   }
   m = t.match(/^(\d{1,2})(\d{2})$/);
   if(m){
     const mins = parseInt(m[2], 10);
-    return mins < 60 ? [parseInt(m[1], 10), mins, suf] : null;
+    return mins < 60 ? [parseInt(m[1], 10), mins, suf, word] : null;
   }
   return null;
+}
+
+// Horloge à deux cases : heure d'avant midi et heure d'après midi, en format 24 h
+function parse24(raw){
+  const t = parseTime(raw);
+  return (t && t[2] === null) ? t : null;
+}
+function checkClock(q, amRaw, pmRaw){
+  const A = parse24(amRaw), P = parse24(pmRaw), h = q.answer[0], m = q.answer[1];
+  return { am: !!A && A[1] === m && A[0] === to24(h, false), pm: !!P && P[1] === m && P[0] === to24(h, true) };
+}
+// Messages ciblés pour chaque case ; null s'il n'y a rien de plus précis à dire
+function clockFeedback(q, amRaw, pmRaw){
+  const c = checkClock(q, amRaw, pmRaw), h = q.answer[0], m = q.answer[1], out = [];
+  const A = parse24(amRaw), P = parse24(pmRaw);
+  if(!c.am){
+    if(String(amRaw).trim() === '') out.push('Il manque l\'heure d\'avant midi.');
+    else if(!A) out.push('Je ne comprends pas l\'heure de la case « avant midi ». Écris-la comme 8h25.');
+    else if(A[0] >= 12) out.push('Avant midi, l\'heure va de 0 h à 11 h 59. Tu as écrit une heure d\'après-midi dans la première case.');
+    else if(A[1] === m) out.push(clockSlip(q, amRaw) || 'Les minutes sont bonnes dans la case « avant midi », mais pas l\'heure.');
+    else out.push('Les minutes ne sont pas bonnes dans la case « avant midi ».');
+  }
+  if(!c.pm){
+    if(String(pmRaw).trim() === '') out.push('Il manque l\'heure d\'après midi.');
+    else if(!P) out.push('Je ne comprends pas l\'heure de la case « après midi ». Écris-la comme 20h25.');
+    else if(P[0] > 0 && P[0] < 12 && P[0] % 12 === h % 12 && P[1] === m) out.push('Après midi, en format 24 h, il faut ajouter 12 heures à l\'heure du matin : ' + P[0] + ' + 12 = ' + (P[0] + 12) + '.');
+    else if(P[0] < 12) out.push('Après midi, l\'heure va de 12 h à 23 h 59 en format 24 h.');
+    else if(P[1] === m) out.push('Les minutes sont bonnes dans la case « après midi », mais pas l\'heure. Pars de l\'heure du matin et ajoute 12.');
+    else out.push('Les minutes ne sont pas bonnes dans la case « après midi ».');
+  }
+  return out.length ? out.join(' ') : null;
 }
 
 // Erreur fréquente sur les horloges : minutes justes, mais heure décalée de 1
 // (ex. : 4 h 55 lu comme 5 h 55, parce que la petite aiguille touche presque le 5)
 function clockSlip(q, raw){
-  if(q.type !== 'time' || !q.mod12 || q.answer[1] === 0) return null;
+  if(q.type !== 'clock' || q.answer[1] === 0) return null;
   const t = parseTime(raw);
   if(!t || t[1] !== q.answer[1]) return null;
   const hh = q.answer[0], next = hh % 12 + 1, prev = (hh + 10) % 12 + 1;
@@ -1172,13 +1224,16 @@ function checkAnswer(q, raw){
     if(q.alsoCents && Math.abs(n - q.answer * 100) < 0.001) return true;
     return false;
   }
+  if(q.type === 'clock'){
+    const r = typeof raw === 'string' ? raw.split('|') : [raw.am, raw.pm];
+    const c = checkClock(q, r[0] || '', r[1] || '');
+    return c.am && c.pm;
+  }
   if(q.type === 'time'){
     const t = parseTime(raw);
     if(!t) return false;
     const h = q.answer[0], m = q.answer[1];
     if(t[1] !== m) return false;
-    // Horloge : on ne peut pas voir si c'est le matin ou l'après-midi, donc les deux sont acceptés
-    if(q.mod12) return t[0] % 12 === h % 12;
     // Problème à heure précise : on accepte l'heure en 24 h ou en 12 h avec am/pm
     let hh = t[0];
     if(t[2] === 'pm' && hh < 12) hh += 12;
@@ -1469,6 +1524,12 @@ function renderQuestion(){
     body += `<div class="choices" id="choices">` +
       q.options.map((o, i) => `<button class="choice" data-i="${i}">${o}</button>`).join('') +
       `</div>`;
+  } else if(q.type === 'clock'){
+    body += `<div class="clockfields">
+      <label class="cf"><span>Avant midi (le matin), en format 24 h</span><input type="text" id="answerInput" placeholder="${q.phs24[0]}" autocomplete="off"></label>
+      <label class="cf"><span>Après midi, en format 24 h</span><input type="text" id="answerInput2" placeholder="${q.phs24[1]}" autocomplete="off"></label>
+      <div><button class="btn" id="submitBtn">Vérifier</button></div>
+    </div>`;
   } else {
     const ph = q.placeholder || (q.unit ? 'Ta réponse (' + q.unit + ')' : 'Ta réponse');
     body += `<div class="answer-row">
@@ -1482,7 +1543,7 @@ function renderQuestion(){
 
   const feedback = document.getElementById('feedback');
   const extra = document.getElementById('extra');
-  document.getElementById('backBtn').addEventListener('click', showMenu);
+  document.getElementById('backBtn').addEventListener('click', () => leaveTo(showMenu));
 
   function success(){
     if(attempts === 0) firstTry++;
@@ -1501,7 +1562,7 @@ function renderQuestion(){
   function failure(raw){
     attempts++;
     feedback.className = 'feedback no';
-    const slip = clockSlip(q, raw);
+    const slip = q.type === 'clock' ? clockFeedback(q, raw.am, raw.pm) : null;
     if(slip && attempts <= 2){
       feedback.textContent = slip;
     } else if(attempts === 1){
@@ -1531,9 +1592,28 @@ function renderQuestion(){
     });
   } else {
     const input = document.getElementById('answerInput');
+    const input2 = document.getElementById('answerInput2');
     const btn = document.getElementById('submitBtn');
     input.focus();
     function submit(){
+      if(q.type === 'clock'){
+        if(input.value.trim() === '' && input2.value.trim() === ''){
+          feedback.className = 'feedback no';
+          feedback.textContent = 'Écris les deux heures avant de vérifier.';
+          return;
+        }
+        const c = checkClock(q, input.value, input2.value);
+        input.classList.toggle('good', c.am); input.classList.toggle('bad', !c.am);
+        input2.classList.toggle('good', c.pm); input2.classList.toggle('bad', !c.pm);
+        if(c.am && c.pm){
+          input.disabled = true; input2.disabled = true; btn.disabled = true;
+          success();
+        } else {
+          failure({ am:input.value, pm:input2.value });
+          (c.am ? input2 : input).select();
+        }
+        return;
+      }
       if(input.value.trim() === ''){
         feedback.className = 'feedback no';
         feedback.textContent = 'Écris une réponse avant de vérifier.';
@@ -1550,6 +1630,7 @@ function renderQuestion(){
     }
     btn.addEventListener('click', submit);
     input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+    if(input2) input2.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
   }
 }
 
