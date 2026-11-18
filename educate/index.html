@@ -134,7 +134,8 @@
   @keyframes c1pop{ 40%{ transform:scale(1.15) rotate(-4deg);} }
   .c1-in{ width:80px; text-align:center; font-size:1.1rem; font-weight:700; padding:5px; border:2px solid var(--ink); border-radius:10px; }
   .c1-in:disabled{ background:var(--gold); border-color:var(--gold); color:#3a2c1a; }
-  .c1-sel{ font-size:.95rem; padding:6px 10px; border:2px solid var(--ink); border-radius:10px; background:#fff; }
+  .c1-sel{ font-size:.95rem; padding:6px 10px; border:2px solid var(--ink); border-radius:10px; background:#fff; color:#1d2b36; font-family:inherit; }
+  .c1-sel option{ background:#fff; color:#1d2b36; }
 
   /* Progress */
   .trail{ display:flex; gap:6px; margin-bottom:24px; }
@@ -162,6 +163,19 @@
   .visual{ display:flex; justify-content:center; margin:0 0 18px; }
 
   .answer-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .vpara{ font-size:1.12rem; line-height:2.1; margin:0 0 14px; }
+  .vpara .vb{ white-space:nowrap; }
+  .vpara input.vin{ flex:none; min-width:0; width:8.5em; padding:3px 8px; font-size:1rem; margin:0 2px; border-radius:6px; }
+  .vpara input.vin.wide{ width:12.5em; }
+  .vpara input.vin.good{ border-color:#2E9E5B; background:#EAF7EF; }
+  .vpara input.vin.bad{ border-color:var(--coral); }
+  .vinf{ font-style:italic; color:#5B5848; font-size:0.95rem; }
+  .vblank{ letter-spacing:1px; color:#7A7362; }
+  .vprev{ background:#FBF6EA; border-radius:8px; padding:8px 12px; margin-bottom:6px; }
+  .vsel{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:0 0 14px; font-weight:700; }
+  .vchip{ margin:-4px 0 10px; font-size:0.92rem; }
+  .linkbtn{ all:unset; cursor:pointer; color:var(--teal-dark); text-decoration:underline; margin-left:8px; }
+  .linkbtn:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
   .clockfields{ display:grid; gap:12px; }
   .clockfields .cf span{ display:block; font-weight:700; font-size:0.92rem; margin-bottom:4px; }
   .clockfields .cf input{ width:100%; max-width:260px; }
@@ -1102,13 +1116,167 @@ function buildFractions(R){
   return R.shuffle(pool).slice(0, 10).map(g => g(R));
 }
 
+const VERBS = {"accompagner":[["accompagne","accompagnes","accompagne","accompagnons","accompagnez","accompagnent"],["accompagnais","accompagnais","accompagnait","accompagnions","accompagniez","accompagnaient"],["accompagnerai","accompagneras","accompagnera","accompagnerons","accompagnerez","accompagneront"],["accompagnerais","accompagnerais","accompagnerait","accompagnerions","accompagneriez","accompagneraient"],"accompagné"],"acheter":[["achète","achètes","achète","achetons","achetez","achètent"],["achetais","achetais","achetait","achetions","achetiez","achetaient"],["achèterai","achèteras","achètera","achèterons","achèterez","achèteront"],["achèterais","achèterais","achèterait","achèterions","achèteriez","achèteraient"],"acheté"],"aller":[["vais","vas","va","allons","allez","vont"],["allais","allais","allait","allions","alliez","allaient"],["irai","iras","ira","irons","irez","iront"],["irais","irais","irait","irions","iriez","iraient"],"allé"],"allumer":[["allume","allumes","allume","allumons","allumez","allument"],["allumais","allumais","allumait","allumions","allumiez","allumaient"],["allumerai","allumeras","allumera","allumerons","allumerez","allumeront"],["allumerais","allumerais","allumerait","allumerions","allumeriez","allumeraient"],"allumé"],"applaudir":[["applaudis","applaudis","applaudit","applaudissons","applaudissez","applaudissent"],["applaudissais","applaudissais","applaudissait","applaudissions","applaudissiez","applaudissaient"],["applaudirai","applaudiras","applaudira","applaudirons","applaudirez","applaudiront"],["applaudirais","applaudirais","applaudirait","applaudirions","applaudiriez","applaudiraient"],"applaudi"],"apporter":[["apporte","apportes","apporte","apportons","apportez","apportent"],["apportais","apportais","apportait","apportions","apportiez","apportaient"],["apporterai","apporteras","apportera","apporterons","apporterez","apporteront"],["apporterais","apporterais","apporterait","apporterions","apporteriez","apporteraient"],"apporté"],"apprendre":[["apprends","apprends","apprend","apprenons","apprenez","apprennent"],["apprenais","apprenais","apprenait","apprenions","appreniez","apprenaient"],["apprendrai","apprendras","apprendra","apprendrons","apprendrez","apprendront"],["apprendrais","apprendrais","apprendrait","apprendrions","apprendriez","apprendraient"],"appris"],"arriver":[["arrive","arrives","arrive","arrivons","arrivez","arrivent"],["arrivais","arrivais","arrivait","arrivions","arriviez","arrivaient"],["arriverai","arriveras","arrivera","arriverons","arriverez","arriveront"],["arriverais","arriverais","arriverait","arriverions","arriveriez","arriveraient"],"arrivé"],"arroser":[["arrose","arroses","arrose","arrosons","arrosez","arrosent"],["arrosais","arrosais","arrosait","arrosions","arrosiez","arrosaient"],["arroserai","arroseras","arrosera","arroserons","arroserez","arroseront"],["arroserais","arroserais","arroserait","arroserions","arroseriez","arroseraient"],"arrosé"],"attacher":[["attache","attaches","attache","attachons","attachez","attachent"],["attachais","attachais","attachait","attachions","attachiez","attachaient"],["attacherai","attacheras","attachera","attacherons","attacherez","attacheront"],["attacherais","attacherais","attacherait","attacherions","attacheriez","attacheraient"],"attaché"],"attraper":[["attrape","attrapes","attrape","attrapons","attrapez","attrapent"],["attrapais","attrapais","attrapait","attrapions","attrapiez","attrapaient"],["attraperai","attraperas","attrapera","attraperons","attraperez","attraperont"],["attraperais","attraperais","attraperait","attraperions","attraperiez","attraperaient"],"attrapé"],"avaler":[["avale","avales","avale","avalons","avalez","avalent"],["avalais","avalais","avalait","avalions","avaliez","avalaient"],["avalerai","avaleras","avalera","avalerons","avalerez","avaleront"],["avalerais","avalerais","avalerait","avalerions","avaleriez","avaleraient"],"avalé"],"boire":[["bois","bois","boit","buvons","buvez","boivent"],["buvais","buvais","buvait","buvions","buviez","buvaient"],["boirai","boiras","boira","boirons","boirez","boiront"],["boirais","boirais","boirait","boirions","boiriez","boiraient"],"bu"],"camper":[["campe","campes","campe","campons","campez","campent"],["campais","campais","campait","campions","campiez","campaient"],["camperai","camperas","campera","camperons","camperez","camperont"],["camperais","camperais","camperait","camperions","camperiez","camperaient"],"campé"],"casser":[["casse","casses","casse","cassons","cassez","cassent"],["cassais","cassais","cassait","cassions","cassiez","cassaient"],["casserai","casseras","cassera","casserons","casserez","casseront"],["casserais","casserais","casserait","casserions","casseriez","casseraient"],"cassé"],"chanter":[["chante","chantes","chante","chantons","chantez","chantent"],["chantais","chantais","chantait","chantions","chantiez","chantaient"],["chanterai","chanteras","chantera","chanterons","chanterez","chanteront"],["chanterais","chanterais","chanterait","chanterions","chanteriez","chanteraient"],"chanté"],"chercher":[["cherche","cherches","cherche","cherchons","cherchez","cherchent"],["cherchais","cherchais","cherchait","cherchions","cherchiez","cherchaient"],["chercherai","chercheras","cherchera","chercherons","chercherez","chercheront"],["chercherais","chercherais","chercherait","chercherions","chercheriez","chercheraient"],"cherché"],"choisir":[["choisis","choisis","choisit","choisissons","choisissez","choisissent"],["choisissais","choisissais","choisissait","choisissions","choisissiez","choisissaient"],["choisirai","choisiras","choisira","choisirons","choisirez","choisiront"],["choisirais","choisirais","choisirait","choisirions","choisiriez","choisiraient"],"choisi"],"chuchoter":[["chuchote","chuchotes","chuchote","chuchotons","chuchotez","chuchotent"],["chuchotais","chuchotais","chuchotait","chuchotions","chuchotiez","chuchotaient"],["chuchoterai","chuchoteras","chuchotera","chuchoterons","chuchoterez","chuchoteront"],["chuchoterais","chuchoterais","chuchoterait","chuchoterions","chuchoteriez","chuchoteraient"],"chuchoté"],"compter":[["compte","comptes","compte","comptons","comptez","comptent"],["comptais","comptais","comptait","comptions","comptiez","comptaient"],["compterai","compteras","comptera","compterons","compterez","compteront"],["compterais","compterais","compterait","compterions","compteriez","compteraient"],"compté"],"construire":[["construis","construis","construit","construisons","construisez","construisent"],["construisais","construisais","construisait","construisions","construisiez","construisaient"],["construirai","construiras","construira","construirons","construirez","construiront"],["construirais","construirais","construirait","construirions","construiriez","construiraient"],"construit"],"courir":[["cours","cours","court","courons","courez","courent"],["courais","courais","courait","courions","couriez","couraient"],["courrai","courras","courra","courrons","courrez","courront"],["courrais","courrais","courrait","courrions","courriez","courraient"],"couru"],"crier":[["crie","cries","crie","crions","criez","crient"],["criais","criais","criait","criions","criiez","criaient"],["crierai","crieras","criera","crierons","crierez","crieront"],["crierais","crierais","crierait","crierions","crieriez","crieraient"],"crié"],"croquer":[["croque","croques","croque","croquons","croquez","croquent"],["croquais","croquais","croquait","croquions","croquiez","croquaient"],["croquerai","croqueras","croquera","croquerons","croquerez","croqueront"],["croquerais","croquerais","croquerait","croquerions","croqueriez","croqueraient"],"croqué"],"cuire":[["cuis","cuis","cuit","cuisons","cuisez","cuisent"],["cuisais","cuisais","cuisait","cuisions","cuisiez","cuisaient"],["cuirai","cuiras","cuira","cuirons","cuirez","cuiront"],["cuirais","cuirais","cuirait","cuirions","cuiriez","cuiraient"],"cuit"],"distribuer":[["distribue","distribues","distribue","distribuons","distribuez","distribuent"],["distribuais","distribuais","distribuait","distribuions","distribuiez","distribuaient"],["distribuerai","distribueras","distribuera","distribuerons","distribuerez","distribueront"],["distribuerais","distribuerais","distribuerait","distribuerions","distribueriez","distribueraient"],"distribué"],"dormir":[["dors","dors","dort","dormons","dormez","dorment"],["dormais","dormais","dormait","dormions","dormiez","dormaient"],["dormirai","dormiras","dormira","dormirons","dormirez","dormiront"],["dormirais","dormirais","dormirait","dormirions","dormiriez","dormiraient"],"dormi"],"dresser":[["dresse","dresses","dresse","dressons","dressez","dressent"],["dressais","dressais","dressait","dressions","dressiez","dressaient"],["dresserai","dresseras","dressera","dresserons","dresserez","dresseront"],["dresserais","dresserais","dresserait","dresserions","dresseriez","dresseraient"],"dressé"],"décorer":[["décore","décores","décore","décorons","décorez","décorent"],["décorais","décorais","décorait","décorions","décoriez","décoraient"],["décorerai","décoreras","décorera","décorerons","décorerez","décoreront"],["décorerais","décorerais","décorerait","décorerions","décoreriez","décoreraient"],"décoré"],"emprunter":[["emprunte","empruntes","emprunte","empruntons","empruntez","empruntent"],["empruntais","empruntais","empruntait","empruntions","empruntiez","empruntaient"],["emprunterai","emprunteras","empruntera","emprunterons","emprunterez","emprunteront"],["emprunterais","emprunterais","emprunterait","emprunterions","emprunteriez","emprunteraient"],"emprunté"],"enfiler":[["enfile","enfiles","enfile","enfilons","enfilez","enfilent"],["enfilais","enfilais","enfilait","enfilions","enfiliez","enfilaient"],["enfilerai","enfileras","enfilera","enfilerons","enfilerez","enfileront"],["enfilerais","enfilerais","enfilerait","enfilerions","enfileriez","enfileraient"],"enfilé"],"enrouler":[["enroule","enroules","enroule","enroulons","enroulez","enroulent"],["enroulais","enroulais","enroulait","enroulions","enrouliez","enroulaient"],["enroulerai","enrouleras","enroulera","enroulerons","enroulerez","enrouleront"],["enroulerais","enroulerais","enroulerait","enroulerions","enrouleriez","enrouleraient"],"enroulé"],"filer":[["file","files","file","filons","filez","filent"],["filais","filais","filait","filions","filiez","filaient"],["filerai","fileras","filera","filerons","filerez","fileront"],["filerais","filerais","filerait","filerions","fileriez","fileraient"],"filé"],"finir":[["finis","finis","finit","finissons","finissez","finissent"],["finissais","finissais","finissait","finissions","finissiez","finissaient"],["finirai","finiras","finira","finirons","finirez","finiront"],["finirais","finirais","finirait","finirions","finiriez","finiraient"],"fini"],"flairer":[["flaire","flaires","flaire","flairons","flairez","flairent"],["flairais","flairais","flairait","flairions","flairiez","flairaient"],["flairerai","flaireras","flairera","flairerons","flairerez","flaireront"],["flairerais","flairerais","flairerait","flairerions","flaireriez","flaireraient"],"flairé"],"gagner":[["gagne","gagnes","gagne","gagnons","gagnez","gagnent"],["gagnais","gagnais","gagnait","gagnions","gagniez","gagnaient"],["gagnerai","gagneras","gagnera","gagnerons","gagnerez","gagneront"],["gagnerais","gagnerais","gagnerait","gagnerions","gagneriez","gagneraient"],"gagné"],"gonfler":[["gonfle","gonfles","gonfle","gonflons","gonflez","gonflent"],["gonflais","gonflais","gonflait","gonflions","gonfliez","gonflaient"],["gonflerai","gonfleras","gonflera","gonflerons","gonflerez","gonfleront"],["gonflerais","gonflerais","gonflerait","gonflerions","gonfleriez","gonfleraient"],"gonflé"],"goûter":[["goûte","goûtes","goûte","goûtons","goûtez","goûtent"],["goûtais","goûtais","goûtait","goûtions","goûtiez","goûtaient"],["goûterai","goûteras","goûtera","goûterons","goûterez","goûteront"],["goûterais","goûterais","goûterait","goûterions","goûteriez","goûteraient"],"goûté"],"grandir":[["grandis","grandis","grandit","grandissons","grandissez","grandissent"],["grandissais","grandissais","grandissait","grandissions","grandissiez","grandissaient"],["grandirai","grandiras","grandira","grandirons","grandirez","grandiront"],["grandirais","grandirais","grandirait","grandirions","grandiriez","grandiraient"],"grandi"],"griller":[["grille","grilles","grille","grillons","grillez","grillent"],["grillais","grillais","grillait","grillions","grilliez","grillaient"],["grillerai","grilleras","grillera","grillerons","grillerez","grilleront"],["grillerais","grillerais","grillerait","grillerions","grilleriez","grilleraient"],"grillé"],"grimper":[["grimpe","grimpes","grimpe","grimpons","grimpez","grimpent"],["grimpais","grimpais","grimpait","grimpions","grimpiez","grimpaient"],["grimperai","grimperas","grimpera","grimperons","grimperez","grimperont"],["grimperais","grimperais","grimperait","grimperions","grimperiez","grimperaient"],"grimpé"],"jouer":[["joue","joues","joue","jouons","jouez","jouent"],["jouais","jouais","jouait","jouions","jouiez","jouaient"],["jouerai","joueras","jouera","jouerons","jouerez","joueront"],["jouerais","jouerais","jouerait","jouerions","joueriez","joueraient"],"joué"],"lacer":[["lace","laces","lace","laçons","lacez","lacent"],["laçais","laçais","laçait","lacions","laciez","laçaient"],["lacerai","laceras","lacera","lacerons","lacerez","laceront"],["lacerais","lacerais","lacerait","lacerions","laceriez","laceraient"],"lacé"],"lancer":[["lance","lances","lance","lançons","lancez","lancent"],["lançais","lançais","lançait","lancions","lanciez","lançaient"],["lancerai","lanceras","lancera","lancerons","lancerez","lanceront"],["lancerais","lancerais","lancerait","lancerions","lanceriez","lanceraient"],"lancé"],"lire":[["lis","lis","lit","lisons","lisez","lisent"],["lisais","lisais","lisait","lisions","lisiez","lisaient"],["lirai","liras","lira","lirons","lirez","liront"],["lirais","lirais","lirait","lirions","liriez","liraient"],"lu"],"manger":[["mange","manges","mange","mangeons","mangez","mangent"],["mangeais","mangeais","mangeait","mangions","mangiez","mangeaient"],["mangerai","mangeras","mangera","mangerons","mangerez","mangeront"],["mangerais","mangerais","mangerait","mangerions","mangeriez","mangeraient"],"mangé"],"marcher":[["marche","marches","marche","marchons","marchez","marchent"],["marchais","marchais","marchait","marchions","marchiez","marchaient"],["marcherai","marcheras","marchera","marcherons","marcherez","marcheront"],["marcherais","marcherais","marcherait","marcherions","marcheriez","marcheraient"],"marché"],"mesurer":[["mesure","mesures","mesure","mesurons","mesurez","mesurent"],["mesurais","mesurais","mesurait","mesurions","mesuriez","mesuraient"],["mesurerai","mesureras","mesurera","mesurerons","mesurerez","mesureront"],["mesurerais","mesurerais","mesurerait","mesurerions","mesureriez","mesureraient"],"mesuré"],"mettre":[["mets","mets","met","mettons","mettez","mettent"],["mettais","mettais","mettait","mettions","mettiez","mettaient"],["mettrai","mettras","mettra","mettrons","mettrez","mettront"],["mettrais","mettrais","mettrait","mettrions","mettriez","mettraient"],"mis"],"mélanger":[["mélange","mélanges","mélange","mélangeons","mélangez","mélangent"],["mélangeais","mélangeais","mélangeait","mélangions","mélangiez","mélangeaient"],["mélangerai","mélangeras","mélangera","mélangerons","mélangerez","mélangeront"],["mélangerais","mélangerais","mélangerait","mélangerions","mélangeriez","mélangeraient"],"mélangé"],"nettoyer":[["nettoie","nettoies","nettoie","nettoyons","nettoyez","nettoient"],["nettoyais","nettoyais","nettoyait","nettoyions","nettoyiez","nettoyaient"],["nettoierai","nettoieras","nettoiera","nettoierons","nettoierez","nettoieront"],["nettoierais","nettoierais","nettoierait","nettoierions","nettoieriez","nettoieraient"],"nettoyé"],"noter":[["note","notes","note","notons","notez","notent"],["notais","notais","notait","notions","notiez","notaient"],["noterai","noteras","notera","noterons","noterez","noteront"],["noterais","noterais","noterait","noterions","noteriez","noteraient"],"noté"],"oublier":[["oublie","oublies","oublie","oublions","oubliez","oublient"],["oubliais","oubliais","oubliait","oubliions","oubliiez","oubliaient"],["oublierai","oublieras","oubliera","oublierons","oublierez","oublieront"],["oublierais","oublierais","oublierait","oublierions","oublieriez","oublieraient"],"oublié"],"partir":[["pars","pars","part","partons","partez","partent"],["partais","partais","partait","partions","partiez","partaient"],["partirai","partiras","partira","partirons","partirez","partiront"],["partirais","partirais","partirait","partirions","partiriez","partiraient"],"parti"],"passer":[["passe","passes","passe","passons","passez","passent"],["passais","passais","passait","passions","passiez","passaient"],["passerai","passeras","passera","passerons","passerez","passeront"],["passerais","passerais","passerait","passerions","passeriez","passeraient"],"passé"],"patiner":[["patine","patines","patine","patinons","patinez","patinent"],["patinais","patinais","patinait","patinions","patiniez","patinaient"],["patinerai","patineras","patinera","patinerons","patinerez","patineront"],["patinerais","patinerais","patinerait","patinerions","patineriez","patineraient"],"patiné"],"peser":[["pèse","pèses","pèse","pesons","pesez","pèsent"],["pesais","pesais","pesait","pesions","pesiez","pesaient"],["pèserai","pèseras","pèsera","pèserons","pèserez","pèseront"],["pèserais","pèserais","pèserait","pèserions","pèseriez","pèseraient"],"pesé"],"planter":[["plante","plantes","plante","plantons","plantez","plantent"],["plantais","plantais","plantait","plantions","plantiez","plantaient"],["planterai","planteras","plantera","planterons","planterez","planteront"],["planterais","planterais","planterait","planterions","planteriez","planteraient"],"planté"],"pleurer":[["pleure","pleures","pleure","pleurons","pleurez","pleurent"],["pleurais","pleurais","pleurait","pleurions","pleuriez","pleuraient"],["pleurerai","pleureras","pleurera","pleurerons","pleurerez","pleureront"],["pleurerais","pleurerais","pleurerait","pleurerions","pleureriez","pleureraient"],"pleuré"],"porter":[["porte","portes","porte","portons","portez","portent"],["portais","portais","portait","portions","portiez","portaient"],["porterai","porteras","portera","porterons","porterez","porteront"],["porterais","porterais","porterait","porterions","porteriez","porteraient"],"porté"],"pousser":[["pousse","pousses","pousse","poussons","poussez","poussent"],["poussais","poussais","poussait","poussions","poussiez","poussaient"],["pousserai","pousseras","poussera","pousserons","pousserez","pousseront"],["pousserais","pousserais","pousserait","pousserions","pousseriez","pousseraient"],"poussé"],"prendre":[["prends","prends","prend","prenons","prenez","prennent"],["prenais","prenais","prenait","prenions","preniez","prenaient"],["prendrai","prendras","prendra","prendrons","prendrez","prendront"],["prendrais","prendrais","prendrait","prendrions","prendriez","prendraient"],"pris"],"promener":[["promène","promènes","promène","promenons","promenez","promènent"],["promenais","promenais","promenait","promenions","promeniez","promenaient"],["promènerai","promèneras","promènera","promènerons","promènerez","promèneront"],["promènerais","promènerais","promènerait","promènerions","promèneriez","promèneraient"],"promené"],"proposer":[["propose","proposes","propose","proposons","proposez","proposent"],["proposais","proposais","proposait","proposions","proposiez","proposaient"],["proposerai","proposeras","proposera","proposerons","proposerez","proposeront"],["proposerais","proposerais","proposerait","proposerions","proposeriez","proposeraient"],"proposé"],"préparer":[["prépare","prépares","prépare","préparons","préparez","préparent"],["préparais","préparais","préparait","préparions","prépariez","préparaient"],["préparerai","prépareras","préparera","préparerons","préparerez","prépareront"],["préparerais","préparerais","préparerait","préparerions","prépareriez","prépareraient"],"préparé"],"prêter":[["prête","prêtes","prête","prêtons","prêtez","prêtent"],["prêtais","prêtais","prêtait","prêtions","prêtiez","prêtaient"],["prêterai","prêteras","prêtera","prêterons","prêterez","prêteront"],["prêterais","prêterais","prêterait","prêterions","prêteriez","prêteraient"],"prêté"],"ramasser":[["ramasse","ramasses","ramasse","ramassons","ramassez","ramassent"],["ramassais","ramassais","ramassait","ramassions","ramassiez","ramassaient"],["ramasserai","ramasseras","ramassera","ramasserons","ramasserez","ramasseront"],["ramasserais","ramasserais","ramasserait","ramasserions","ramasseriez","ramasseraient"],"ramassé"],"ranger":[["range","ranges","range","rangeons","rangez","rangent"],["rangeais","rangeais","rangeait","rangions","rangiez","rangeaient"],["rangerai","rangeras","rangera","rangerons","rangerez","rangeront"],["rangerais","rangerais","rangerait","rangerions","rangeriez","rangeraient"],"rangé"],"rapporter":[["rapporte","rapportes","rapporte","rapportons","rapportez","rapportent"],["rapportais","rapportais","rapportait","rapportions","rapportiez","rapportaient"],["rapporterai","rapporteras","rapportera","rapporterons","rapporterez","rapporteront"],["rapporterais","rapporterais","rapporterait","rapporterions","rapporteriez","rapporteraient"],"rapporté"],"remplir":[["remplis","remplis","remplit","remplissons","remplissez","remplissent"],["remplissais","remplissais","remplissait","remplissions","remplissiez","remplissaient"],["remplirai","rempliras","remplira","remplirons","remplirez","rempliront"],["remplirais","remplirais","remplirait","remplirions","rempliriez","rempliraient"],"rempli"],"rendre":[["rends","rends","rend","rendons","rendez","rendent"],["rendais","rendais","rendait","rendions","rendiez","rendaient"],["rendrai","rendras","rendra","rendrons","rendrez","rendront"],["rendrais","rendrais","rendrait","rendrions","rendriez","rendraient"],"rendu"],"rentrer":[["rentre","rentres","rentre","rentrons","rentrez","rentrent"],["rentrais","rentrais","rentrait","rentrions","rentriez","rentraient"],["rentrerai","rentreras","rentrera","rentrerons","rentrerez","rentreront"],["rentrerais","rentrerais","rentrerait","rentrerions","rentreriez","rentreraient"],"rentré"],"renverser":[["renverse","renverses","renverse","renversons","renversez","renversent"],["renversais","renversais","renversait","renversions","renversiez","renversaient"],["renverserai","renverseras","renversera","renverserons","renverserez","renverseront"],["renverserais","renverserais","renverserait","renverserions","renverseriez","renverseraient"],"renversé"],"rire":[["ris","ris","rit","rions","riez","rient"],["riais","riais","riait","riions","riiez","riaient"],["rirai","riras","rira","rirons","rirez","riront"],["rirais","rirais","rirait","ririons","ririez","riraient"],"ri"],"rouler":[["roule","roules","roule","roulons","roulez","roulent"],["roulais","roulais","roulait","roulions","rouliez","roulaient"],["roulerai","rouleras","roulera","roulerons","roulerez","rouleront"],["roulerais","roulerais","roulerait","roulerions","rouleriez","rouleraient"],"roulé"],"réparer":[["répare","répares","répare","réparons","réparez","réparent"],["réparais","réparais","réparait","réparions","répariez","réparaient"],["réparerai","répareras","réparera","réparerons","réparerez","répareront"],["réparerais","réparerais","réparerait","réparerions","répareriez","répareraient"],"réparé"],"saluer":[["salue","salues","salue","saluons","saluez","saluent"],["saluais","saluais","saluait","saluions","saluiez","saluaient"],["saluerai","salueras","saluera","saluerons","saluerez","salueront"],["saluerais","saluerais","saluerait","saluerions","salueriez","salueraient"],"salué"],"sauter":[["saute","sautes","saute","sautons","sautez","sautent"],["sautais","sautais","sautait","sautions","sautiez","sautaient"],["sauterai","sauteras","sautera","sauterons","sauterez","sauteront"],["sauterais","sauterais","sauterait","sauterions","sauteriez","sauteraient"],"sauté"],"sentir":[["sens","sens","sent","sentons","sentez","sentent"],["sentais","sentais","sentait","sentions","sentiez","sentaient"],["sentirai","sentiras","sentira","sentirons","sentirez","sentiront"],["sentirais","sentirais","sentirait","sentirions","sentiriez","sentiraient"],"senti"],"servir":[["sers","sers","sert","servons","servez","servent"],["servais","servais","servait","servions","serviez","servaient"],["servirai","serviras","servira","servirons","servirez","serviront"],["servirais","servirais","servirait","servirions","serviriez","serviraient"],"servi"],"sortir":[["sors","sors","sort","sortons","sortez","sortent"],["sortais","sortais","sortait","sortions","sortiez","sortaient"],["sortirai","sortiras","sortira","sortirons","sortirez","sortiront"],["sortirais","sortirais","sortirait","sortirions","sortiriez","sortiraient"],"sorti"],"souffler":[["souffle","souffles","souffle","soufflons","soufflez","soufflent"],["soufflais","soufflais","soufflait","soufflions","souffliez","soufflaient"],["soufflerai","souffleras","soufflera","soufflerons","soufflerez","souffleront"],["soufflerais","soufflerais","soufflerait","soufflerions","souffleriez","souffleraient"],"soufflé"],"sourire":[["souris","souris","sourit","sourions","souriez","sourient"],["souriais","souriais","souriait","souriions","souriiez","souriaient"],["sourirai","souriras","sourira","sourirons","sourirez","souriront"],["sourirais","sourirais","sourirait","souririons","souririez","souriraient"],"souri"],"tomber":[["tombe","tombes","tombe","tombons","tombez","tombent"],["tombais","tombais","tombait","tombions","tombiez","tombaient"],["tomberai","tomberas","tombera","tomberons","tomberez","tomberont"],["tomberais","tomberais","tomberait","tomberions","tomberiez","tomberaient"],"tombé"],"venir":[["viens","viens","vient","venons","venez","viennent"],["venais","venais","venait","venions","veniez","venaient"],["viendrai","viendras","viendra","viendrons","viendrez","viendront"],["viendrais","viendrais","viendrait","viendrions","viendriez","viendraient"],"venu"],"verser":[["verse","verses","verse","versons","versez","versent"],["versais","versais","versait","versions","versiez","versaient"],["verserai","verseras","versera","verserons","verserez","verseront"],["verserais","verserais","verserait","verserions","verseriez","verseraient"],"versé"],"visiter":[["visite","visites","visite","visitons","visitez","visitent"],["visitais","visitais","visitait","visitions","visitiez","visitaient"],["visiterai","visiteras","visitera","visiterons","visiterez","visiteront"],["visiterais","visiterais","visiterait","visiterions","visiteriez","visiteraient"],"visité"],"voler":[["vole","voles","vole","volons","volez","volent"],["volais","volais","volait","volions","voliez","volaient"],["volerai","voleras","volera","volerons","volerez","voleront"],["volerais","volerais","volerait","volerions","voleriez","voleraient"],"volé"],"vérifier":[["vérifie","vérifies","vérifie","vérifions","vérifiez","vérifient"],["vérifiais","vérifiais","vérifiait","vérifiions","vérifiiez","vérifiaient"],["vérifierai","vérifieras","vérifiera","vérifierons","vérifierez","vérifieront"],["vérifierais","vérifierais","vérifierait","vérifierions","vérifieriez","vérifieraient"],"vérifié"],"écrire":[["écris","écris","écrit","écrivons","écrivez","écrivent"],["écrivais","écrivais","écrivait","écrivions","écriviez","écrivaient"],["écrirai","écriras","écrira","écrirons","écrirez","écriront"],["écrirais","écrirais","écrirait","écririons","écririez","écriraient"],"écrit"],"avoir":[["ai","as","a","avons","avez","ont"],["avais","avais","avait","avions","aviez","avaient"],["aurai","auras","aura","aurons","aurez","auront"],["aurais","aurais","aurait","aurions","auriez","auraient"],"eu"],"être":[["suis","es","est","sommes","êtes","sont"],["étais","étais","était","étions","étiez","étaient"],["serai","seras","sera","serons","serez","seront"],["serais","serais","serait","serions","seriez","seraient"],"été"]};
+const VERB_STORIES = [{"id":"cabane","p":"3s","time":{"pres":"Chaque printemps","pc":"Le printemps dernier","imp":"Autrefois, chaque printemps","fs":"Le printemps prochain"},"lead":"{N} [visiter!] la cabane à sucre de son oncle Gilbert, près de Saint-Hyacinthe.","cond":"Si {N} pouvait choisir sa sortie préférée, ce serait la cabane à sucre de son oncle Gilbert.","pqp":"Ce soir-là, devant ses parents, {N} avait des tonnes d'histoires à raconter sur la cabane à sucre.","atoms":["D'abord, {il} [mettre] sa tuque rouge et ses grosses bottes.","Ensuite, {il} [marcher] dans la neige jusqu'à l'érablière.","Oncle Gilbert [verser] le sirop bouillant sur une longue bande de neige propre.","{N} [enrouler] la tire autour d'un bâton de bois.","Une vraie gourmandise.","Un cousin [renverser] son verre de lait sur la nappe.","Tout le monde [rire] longtemps.","Avant de partir, {il} [acheter] un petit pot de sirop pour ses parents.","Sur le chemin du retour, {il} [dormir] dans l'autobus, la tête contre la vitre."]},{"id":"patinoire","p":"3s","time":{"pres":"Chaque dimanche matin","pc":"Dimanche dernier","imp":"Autrefois, chaque dimanche matin","fs":"Dimanche prochain"},"lead":"{N} [patiner!] à l'aréna du quartier avec deux amis.","cond":"Si {N} pouvait réserver la glace de l'aréna, le dimanche serait parfait.","pqp":"À la fin de la matinée, {N} avait des courbatures dans les jambes.","atoms":["Avant le match, {il} [lacer] ses patins trop serrés.","{N} [attacher] son casque et ses gants avec soin.","Le zamboni [finir] son dernier tour.",{"t":"Ses amis [arriver] avec un sac de rondelles.","p":"3p","g":"m"},"Trois contre trois, pas plus.","{N} [lancer] la rondelle contre la bande.",{"t":"Un ami [tomber] deux fois en dix minutes.","g":"m"},"Tout le monde [crier] de joie à chaque but.","À midi, {il} [rentrer] à la maison, les joues rouges et les doigts gelés."]},{"id":"marche","p":"3s","time":{"pres":"Chaque samedi","pc":"Samedi dernier","imp":"Autrefois, chaque samedi","fs":"Samedi prochain"},"lead":"{N} [accompagner!] sa grand-mère au marché Jean-Talon, à Montréal.","cond":"Si {N} pouvait choisir sa sortie du samedi, ce serait le marché Jean-Talon avec sa grand-mère.","pqp":"Une fois à la maison, la cuisine de sa grand-mère sentait la fraise et le basilic.","atoms":["Pour commencer, {il} [goûter] une fraise offerte par le vendeur.","Puis {il} [choisir] six pommes bien rouges.","Sa grand-mère [compter] ses pièces une par une.","Le vendeur [peser] les pommes sur une vieille balance.","Du basilic à plein nez.","{N} [porter] le sac de légumes jusqu'à l'auto.",{"t":"Deux pigeons [voler] autour du kiosque à pain.","p":"3p"},"Au retour, {il} [ranger] les pommes dans le bac du frigo.","Le soir, toute la famille [croquer] une pomme."]},{"id":"chien","p":"3s","time":{"pres":"Chaque matin","pc":"Hier matin","imp":"Autrefois, chaque matin","fs":"Demain matin"},"lead":"{N} [promener!] Biscuit, son chien, dans la ruelle derrière l'école.","cond":"Si {N} avait congé demain, une promenade avec Biscuit, son chien, serait la première chose au programme.","pqp":"Avant le premier cours, la matinée de {N} avait pris un drôle de tour.","atoms":["Au début, Biscuit [flairer] une piste dans les feuilles mortes.",{"t":"Soudain, le chien [partir] à toute vitesse.","g":"m"},"{N} [courir] derrière lui en criant son nom.",{"t":"Un voisin [sortir] sur son balcon en pyjama.","g":"m"},"Quelle scène !","Biscuit [sauter] dans une flaque de boue.","{N} [attraper] la laisse juste à temps.","Le voisin [applaudir] depuis son balcon.","À huit heures, {il} [arriver] à l'école avec des bottes couvertes de boue."]},{"id":"gateau","p":"3s","time":{"pres":"Chaque année","pc":"L'an dernier","imp":"Autrefois, chaque année","fs":"L'an prochain"},"lead":"Pour l'anniversaire de sa petite sœur Rosalie, {N} [préparer!] un gâteau au chocolat avec son père.","cond":"Si {N} devait organiser la fête de sa petite sœur Rosalie, le gâteau au chocolat serait la première chose à faire.","pqp":"Quand Rosalie est rentrée de l'école, la cuisine sentait bon le chocolat.","atoms":["Première étape, {il} [casser] quatre œufs dans un grand bol.","{N} [mélanger] la farine et le cacao avec une cuillère de bois.","Son père [allumer] le four à 180 degrés.",{"t":"Une cuillère de beurre [tomber] sur le plancher.","g":"f"},"Zut !","{N} [nettoyer] le plancher avec un vieux chiffon.","Le gâteau [cuire] pendant quarante minutes.","Toute la cuisine [sentir] le chocolat.","À la fin, {il} [décorer] le dessus avec des fraises et dix bougies."]},{"id":"camping","p":"1p","time":{"pres":"Chaque été","pc":"L'été dernier","imp":"Autrefois, chaque été","fs":"L'été prochain"},"lead":"Avec ma famille, nous [camper!] une semaine au parc de la Mauricie.","cond":"Si nous avions une semaine libre, la tente rouge nous attendrait au bord d'un lac de la Mauricie.","pqp":"Le lendemain matin, un brouillard épais flottait sur le lac.","atoms":["Au début, nous [dresser] la tente près de l'eau.","Ensuite, nous [ramasser] du bois sec pour le feu.",{"t":"Papa [allumer] le feu avec une seule allumette.","p":"3s"},{"t":"Ma sœur [griller] des guimauves au bout d'un bâton.","p":"3s"},"Que de fumée !","Nous [chanter] trois chansons de Passe-Partout.",{"t":"Un raton laveur [prendre] notre sac de chips.","p":"3s"},{"t":"Maman [rire] aux larmes.","p":"3s"},"Vers dix heures, nous [dormir] sous la tente en écoutant la pluie."]},{"id":"classe","p":"3p","g":"m","time":{"pres":"Chaque jeudi","pc":"Jeudi dernier","imp":"Autrefois, chaque jeudi","fs":"Jeudi prochain"},"lead":"Les élèves de madame Tremblay [planter!] des haricots dans des pots de yogourt.","cond":"Si la classe de madame Tremblay avait un vrai jardin, les élèves y planteraient des haricots.","pqp":"Un mois plus tard, la fenêtre de la classe de madame Tremblay ressemblait à une petite forêt.","atoms":["Tout de suite, ils [remplir] chaque pot de terre humide.","Camille et Rémi [arroser] les graines avec un petit pichet.",{"t":"Madame Tremblay [écrire] la date sur chaque pot.","p":"3s"},{"t":"Un élève [oublier] son pot dans le couloir.","p":"3s"},"Pauvres haricots !","Les élèves [mesurer] les premières pousses avec une règle.",{"t":"Une pousse [grandir] de deux centimètres en trois jours.","p":"3s"},{"t":"Tout le monde [noter] les chiffres dans un cahier vert.","p":"3s"},"À la fin du mois, ils [rapporter] leurs plants à la maison."]},{"id":"biblio","p":"3s","time":{"pres":"Chaque mercredi","pc":"Mercredi dernier","imp":"Autrefois, chaque mercredi","fs":"Mercredi prochain"},"lead":"{N} [aller!] à la bibliothèque après l'école.","cond":"Si {N} pouvait choisir un endroit pour lire en paix, ce serait la bibliothèque du quartier.","pqp":"Quand la bibliothécaire a éteint les lumières à dix-neuf heures, {N} avait déjà lu pendant trois heures.","atoms":["À l'arrivée, {il} [rendre] trois bandes dessinées au comptoir.","Puis {il} [chercher] un livre sur les volcans.",{"t":"La bibliothécaire [sourire] derrière ses grandes lunettes.","p":"3s"},{"t":"Un bébé [pleurer] dans la section jeunesse.","p":"3s"},"Silence, s'il vous plaît.","{N} [lire] vingt pages sur le Vésuve.",{"t":"Deux amis [venir] s'asseoir à sa table.","p":"3p","g":"m"},{"t":"Les trois enfants [chuchoter] pendant une heure.","p":"3p"},"Avant la fermeture, {il} [emprunter] deux livres et un roman policier."]},{"id":"pluie","p":"1s","time":{"pres":"Chaque dimanche de pluie","pc":"Dimanche dernier","imp":"Autrefois, chaque dimanche de pluie","fs":"Dimanche prochain"},"lead":"Je [passer!] la journée à la maison avec mon petit frère Étienne.","cond":"Si je devais choisir une journée de pluie idéale, je la passerais à la maison avec mon petit frère Étienne.","pqp":"Quand maman est rentrée du dépanneur, le salon ne ressemblait plus à rien.","atoms":["Dès le réveil, je [construire] une cabane avec les coussins du sofa.",{"t":"Étienne [apporter] une lampe de poche.","p":"3s"},{"t":"Nous [jouer] aux cartes sous une couverture.","p":"1p"},{"t":"Étienne [gagner] quatre parties de suite.","p":"3s"},"Humiliant.","Je [proposer] une revanche à trois heures.",{"t":"Le chat [grimper] sur la cabane.","p":"3s"},{"t":"La cabane [tomber] sur nos têtes.","p":"3s","g":"f"},{"t":"Nous [rire] pendant dix bonnes minutes.","p":"1p"}]},{"id":"velo","p":"3s","time":{"pres":"Chaque été","pc":"L'été dernier","imp":"Autrefois, chaque été","fs":"L'été prochain"},"lead":"{N} [rouler!] sur la piste cyclable du canal de Lachine avec sa tante Nadia.","cond":"Si {N} avait une semaine entière de vacances, {il} roulerait chaque jour sur la piste du canal de Lachine avec sa tante Nadia.","pqp":"Quand le soleil s'est couché sur le canal, {N} avait déjà parcouru trente kilomètres.","atoms":["Au départ, {il} [gonfler] les pneus de son vélo bleu.",{"t":"Sa tante [vérifier] les freins.","p":"3s"},{"t":"Tante Nadia et {N} [partir] à neuf heures, avec une bouteille d'eau chacune.","p":"3p","g":"mixf"},{"t":"Un cycliste [filer] à toute vitesse.","p":"3s"},"Trente degrés à l'ombre.","{N} [boire] presque toute son eau avant midi.",{"t":"Soudain, la chaîne [sauter] près du pont.","p":"3s"},{"t":"Tante Nadia [réparer] la chaîne avec un outil minuscule.","p":"3s"},{"t":"Au retour, tante Nadia et {N} [manger] une crème glacée à la vanille.","p":"3p","g":"mixf"}]},{"id":"neige","p":"3s","time":{"pres":"Chaque hiver","pc":"L'hiver dernier","imp":"Autrefois, chaque hiver","fs":"L'hiver prochain"},"lead":"{N} [construire!] un bonhomme de neige dans la cour de ses grands-parents.","cond":"Si la neige tombait toute la nuit, {N} construirait un bonhomme géant dans la cour de ses grands-parents.","pqp":"Au coucher du soleil, un bonhomme de neige géant surveillait la cour des grands-parents.","atoms":["Au début, {il} [rouler] trois grosses boules de neige.",{"t":"Grand-papa [apporter] une vieille carotte.","p":"3s"},{"t":"Le plus gros morceau [peser] bien trente kilos.","p":"3s"},"{N} [pousser] la tête jusqu'en haut.","Pas facile.",{"t":"Deux boutons de manteau [servir] d'yeux.","p":"3p"},{"t":"Grand-maman [prêter] son plus beau foulard.","p":"3s"},{"t":"Les voisins [venir] voir le résultat.","p":"3p","g":"m"},"Pour finir, {il} [avaler] un chocolat chaud avec des guimauves."]},{"id":"spectacle","p":"3s","time":{"pres":"Chaque décembre","pc":"En décembre dernier","imp":"Autrefois, chaque décembre","fs":"En décembre prochain"},"lead":"{N} [jouer!] dans le spectacle de Noël de son école.","cond":"Si {N} pouvait choisir son rôle, {il} serait la vedette du spectacle de Noël.","pqp":"Au retour à la maison, {N} avait la gorge sèche et le cœur encore tout excité.","atoms":["Avant tout, {il} [apprendre] ses paroles par cœur.","Puis {il} [enfiler] son costume de lutin vert.",{"t":"La directrice [distribuer] des programmes à l'entrée.","p":"3s"},{"t":"Les parents [arriver] en retard avec leurs manteaux mouillés.","p":"3p","g":"m"},"Trac total.","{N} [oublier] sa première phrase.",{"t":"Un ami lui [souffler] la réponse.","p":"3s"},{"t":"Le public [rire] de bon cœur.","p":"3s"},{"t":"À la fin, tout le monde [saluer] la salle.","p":"3s"}]}];
+// =====================================================================
+//  LES VERBES DU JOUR : paragraphes à compléter, au temps choisi
+// =====================================================================
+const VERB_TENSES = [
+  { id:'pres', label:'Présent', rule:'Présent : on écrit le verbe avec la terminaison qui va avec le sujet.' },
+  { id:'pc',   label:'Passé composé', compound:true, rule:'Passé composé : l\'auxiliaire avoir ou être au présent, puis le participe passé. Avec être, le participe s\'accorde avec le sujet.' },
+  { id:'imp',  label:'Imparfait', rule:'Imparfait : on part du « nous » du présent, on enlève -ons et on ajoute -ais, -ais, -ait, -ions, -iez, -aient.' },
+  { id:'fut',  label:'Futur simple', rule:'Futur simple : on part de l\'infinitif et on ajoute -ai, -as, -a, -ons, -ez, -ont. Certains verbes changent de radical.' },
+  { id:'fp',   label:'Futur proche', compound:true, rule:'Futur proche : le verbe aller au présent, puis le verbe à l\'infinitif.' },
+  { id:'cond', label:'Conditionnel présent', rule:'Conditionnel présent : le radical du futur, puis les terminaisons -ais, -ais, -ait, -ions, -iez, -aient.' },
+  { id:'pqp',  label:'Plus-que-parfait', compound:true, rule:'Plus-que-parfait : l\'auxiliaire avoir ou être à l\'imparfait, puis le participe passé. Avec être, le participe s\'accorde avec le sujet.' }
+];
+const VERB_ETRE = ['aller', 'venir', 'arriver', 'partir', 'sortir', 'tomber', 'rentrer'];
+const VERB_HARD = ['aller', 'boire', 'construire', 'courir', 'cuire', 'dormir', 'lire', 'mettre', 'partir', 'prendre', 'rire', 'sentir', 'servir', 'sortir', 'sourire', 'venir', 'écrire', 'apprendre', 'rendre'];
+const VERB_PERS = ['1s', '2s', '3s', '1p', '2p', '3p'];
+const VERB_PERS_LABEL = { '1s':'1re personne du singulier (je)', '2s':'2e personne du singulier (tu)', '3s':'3e personne du singulier (il, elle, on)',
+  '1p':'1re personne du pluriel (nous)', '2p':'2e personne du pluriel (vous)', '3p':'3e personne du pluriel (ils, elles)' };
+const VERB_BLANKS = [1, 2, 2, 3, 3, 4, 4, 5, 5, 6];   // de plus en plus de cases, manche après manche
+
+function verbTense(id){ return VERB_TENSES.find(t => t.id === id) || VERB_TENSES[0]; }
+function verbAgree(pp, g, plural){ return pp + (g === 'f' ? 'e' : '') + (plural ? 's' : ''); }
+function vconj(lemma, tense, pi, g){
+  const v = VERBS[lemma], i = VERB_PERS.indexOf(pi), k = { pres:0, imp:1, fut:2, cond:3 }[tense];
+  if(k !== undefined) return v[k][i];
+  if(tense === 'fp') return VERBS.aller[0][i] + ' ' + lemma;
+  const etre = VERB_ETRE.indexOf(lemma) >= 0;
+  const aux = VERBS[etre ? 'être' : 'avoir'][tense === 'pc' ? 0 : 1][i];
+  return aux + ' ' + (etre ? verbAgree(v[4], g, pi.charAt(1) === 'p') : v[4]);
+}
+function vnorm(s){ return String(s).toLowerCase().replace(/[’‘`´]/g, '\'').replace(/\s+/g, ' ').trim(); }
+function vstrip(s){ return vnorm(s).normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function lowerFirst(s){ return /^[A-ZÀ-Ý]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
+
+const VSLOT = /\[([^\]|!]+)(!)?(?:\|([123][sp]))?\]/g;
+// Transforme une phrase modèle en morceaux : texte, verbe donné ou verbe à compléter
+function verbParts(tpl, tense, prot, p, g){
+  const s = tpl.replace(/\{N\}/g, prot.n).replace(/\{Il\}/g, cap(prot.p)).replace(/\{il\}/g, prot.p).replace(/\{e\}/g, prot.g === 'f' ? 'e' : '');
+  const parts = []; let last = 0, m;
+  VSLOT.lastIndex = 0;
+  while((m = VSLOT.exec(s))){
+    parts.push({ t:'text', v:s.slice(last, m.index) });
+    const pi = m[3] || p;
+    const form = vconj(m[1], tense, pi, g);
+    // « je » devant une voyelle : j'
+    const prev = parts[parts.length - 1];
+    if(pi === '1s' && /(^|[\s(])[Jj]e $/.test(prev.v) && /^[aeiouyhéèêàâîôûœ]/i.test(form)) prev.v = prev.v.slice(0, -3) + prev.v.charAt(prev.v.length - 3) + '\'';
+    parts.push({ t:'slot', lemma:m[1], given:!!m[2], pi:pi, g:g, form:form });
+    last = m.index + m[0].length;
+  }
+  parts.push({ t:'text', v:s.slice(last) });
+  return parts;
+}
+
+function buildVerbRound(R, story, tense, prot, K, ri){
+  const g0 = story.g || 'prot';
+  const resolveG = g => (g === 'mixf' ? (prot.g === 'f' ? 'f' : 'm') : (g === 'prot' || !g ? prot.g : g));
+  // Phrase d'ouverture : le moment de l'histoire, selon le temps
+  let lead;
+  if(tense === 'cond') lead = story.cond;
+  else if(tense === 'pqp') lead = story.pqp;
+  else lead = story.time[({ fut:'fs', fp:'fs' })[tense] || tense] + ', ' + lowerFirst(story.lead);
+  const sents = [{ tpl:lead, p:story.p, g:resolveG(g0) }];
+  story.atoms.forEach(a => {
+    const o = typeof a === 'string' ? { t:a } : a;
+    sents.push({ tpl:o.t, p:o.p || story.p, g:resolveG(o.g || g0) });
+  });
+  const parsed = sents.map(s => verbParts(s.tpl, tense, prot, s.p, s.g));
+  // Phrases montrées : on s'arrête quand il y a assez de verbes pour les cases + au moins un verbe donné
+  let shown = 1, avail = 0;
+  const countSlots = ps => ps.filter(x => x.t === 'slot' && !x.given).length;
+  while(shown < parsed.length && (avail < K + 1 || shown < 3)){ avail += countSlots(parsed[shown]); shown++; }
+  const cands = [];
+  for(let i = 0; i < shown; i++) parsed[i].forEach(x => { if(x.t === 'slot' && !x.given) cands.push(x); });
+  let order = R.shuffle(cands);
+  if(ri < 4) order = order.filter(x => VERB_HARD.indexOf(x.lemma) < 0).concat(order.filter(x => VERB_HARD.indexOf(x.lemma) >= 0));
+  order.slice(0, K).forEach(x => { x.blank = true; });
+  // Paragraphe final : morceaux dans l'ordre de lecture
+  const parts = []; let bi = 0; const blanks = [];
+  for(let i = 0; i < shown; i++){
+    if(i) parts.push({ t:'text', v:' ' });
+    parsed[i].forEach(x => {
+      if(x.t === 'text') parts.push(x);
+      else if(x.blank){ x.i = bi++; blanks.push({ answer:x.form, lemma:x.lemma, pi:x.pi, g:x.g }); parts.push(x); }
+      else parts.push({ t:'text', v:x.form });
+    });
+  }
+  return { parts:parts, blanks:blanks };
+}
+
+function buildVerbs(R, tenseId){
+  const tense = verbTense(tenseId), T = tense.label.toLowerCase();
+  const stories = R.shuffle(VERB_STORIES).slice(0, 10);
+  const names = R.shuffle(NAMES);
+  return stories.map((st, ri) => {
+    const nm = names[ri % names.length];
+    const prot = { n:nm.n, p:nm.p, g:nm.p === 'elle' ? 'f' : 'm' };
+    const K = VERB_BLANKS[ri];
+    const r = buildVerbRound(R, st, tense.id, prot, K, ri);
+    const done = r.parts.map(x => x.t === 'text' ? x.v : (x.blank ? '<b>' + x.form + '</b>' : x.form)).join('');
+    const how = tense.compound
+      ? (tense.id === 'fp' ? ' Écris les deux mots dans la même case (aller + verbe).' : ' Écris les deux mots dans la même case (auxiliaire + participe passé).')
+      : '';
+    return {
+      type:'verbs', tense:tense.id, story:st.id, parts:r.parts, blanks:r.blanks, nblanks:r.blanks.length,
+      text:`Complète ${r.blanks.length > 1 ? 'les ' + r.blanks.length + ' cases' : 'la case'} avec le verbe entre parenthèses, conjugué ${tense.id === 'imp' ? 'à l\'' : 'au '}<b>${T}</b>.${how}`,
+      hint:tense.rule,
+      explain:'Voici le paragraphe complet : ' + done
+    };
+  });
+}
+
+function verbForms(lemma, g){
+  const out = [];
+  VERB_TENSES.forEach(t => VERB_PERS.forEach(p => { out.push({ tense:t.id, pi:p, form:vconj(lemma, t.id, p, g) }); }));
+  return out;
+}
+function checkVerbs(q, vals){ return q.blanks.map((b, i) => vnorm(vals[i] || '') === vnorm(b.answer)); }
+// Pourquoi cette case est fausse : message ciblé
+function verbDiag(q, i, typed){
+  const b = q.blanks[i], t = vnorm(typed), ans = vnorm(b.answer), T = verbTense(q.tense), tag = 'Case ' + (i + 1) + ' (' + b.lemma + ') : ';
+  if(t === '') return tag + 'elle est vide.';
+  if(vstrip(t) === vstrip(ans)) return tag + 'presque ! Vérifie les accents.';
+  const hit = verbForms(b.lemma, b.g).filter(f => vnorm(f.form) === t)[0];
+  if(hit){
+    if(hit.tense === q.tense) return tag + 'c\'est le bon temps, mais pas la bonne personne. Relis le sujet de la phrase.';
+    return tag + 'ça, c\'est le ' + verbTense(hit.tense).label.toLowerCase() + '. On cherche le ' + T.label.toLowerCase() + '.';
+  }
+  if(T.compound){
+    const w = ans.split(' ');
+    if(t.indexOf(' ') < 0) return tag + 'il manque un mot : ' + (q.tense === 'fp' ? 'le verbe aller' : 'l\'auxiliaire') + ' avant le verbe.';
+    const tw = t.split(' ');
+    if(q.tense !== 'fp' && tw[0] === w[0]){
+      if(vstrip(tw[1]).replace(/e?s?$/, '') === vstrip(w[1]).replace(/e?s?$/, '')) return tag + 'pense à l\'accord du participe passé : avec être, il s\'accorde avec le sujet (féminin, pluriel).';
+      return tag + 'l\'auxiliaire est bon, mais vérifie le participe passé de « ' + b.lemma + ' ».';
+    }
+    return tag + 'vérifie l\'auxiliaire (avoir ou être) et sa terminaison.';
+  }
+  if(t.slice(0, 3) === ans.slice(0, 3)) return tag + 'vérifie la terminaison.';
+  return tag + 'je ne reconnais pas cette forme du verbe « ' + b.lemma + ' ».';
+}
+function verbHint(q, i){
+  const b = q.blanks[i];
+  return 'Case ' + (i + 1) + ' (' + b.lemma + ') : ' + VERB_PERS_LABEL[b.pi] + '.' + (VERB_ETRE.indexOf(b.lemma) >= 0 && verbTense(q.tense).compound && q.tense !== 'fp' ? ' Ce verbe prend l\'auxiliaire être.' : '');
+}
+function verbPartsHTML(q){
+  const wide = verbTense(q.tense).compound ? ' wide' : '';
+  return q.parts.map(x => x.t === 'text' ? x.v : (
+    '<span class="vb"><input type="text" class="vin' + wide + '" data-i="' + x.i + '" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Verbe ' + (x.i + 1) + ', infinitif ' + x.lemma + '"> <span class="vinf">(' + x.lemma + ')</span></span>'
+  )).join('');
+}
+
 // =====================================================================
 //  CONSTRUCTION DE LA SÉRIE DU JOUR
 // =====================================================================
-function buildQuestions(id, key){
+function buildQuestions(id, key, tense){
   const R = makeRng(key + '|' + id);
   let qs;
-  if(id === 'exam') qs = buildExam(R);
+  if(id === 'verbs') qs = buildVerbs(R, tense || 'pres');
+  else if(id === 'exam') qs = buildExam(R);
   else if(id === 'time') qs = buildTime(R);
   else if(id === 'money') qs = buildMoney(R);
   else qs = buildFractions(R);
@@ -1132,7 +1300,9 @@ const modules = [
   { id:'money', icon:'$', color:'#C98A12', title:'La monnaie',
     desc:'10 problèmes du jour : compter des pièces, payer, rendre la monnaie.' },
   { id:'fractions', icon:'½', color:'#6B4FA3', title:'Jeux de fractions',
-    desc:'10 jeux du jour : lire, comparer, trouver une fraction égale, partager.' }
+    desc:'10 jeux du jour : lire, comparer, trouver une fraction égale, partager.' },
+  { id:'verbs', icon:'✍', color:'#2F6EA5', title:'Les verbes du jour',
+    desc:'10 paragraphes du jour à compléter avec des verbes. Tu choisis le temps, et il y a de plus en plus de cases à chaque manche.' }
 ];
 
 // =====================================================================
@@ -1217,6 +1387,10 @@ function clockSlip(q, raw){
 }
 
 function checkAnswer(q, raw){
+  if(q.type === 'verbs'){
+    const vals = Array.isArray(raw) ? raw : String(raw).split('|');
+    return checkVerbs(q, vals).every(Boolean);
+  }
   if(q.type === 'num'){
     const n = parseNum(raw);
     if(isNaN(n)) return false;
@@ -1270,6 +1444,7 @@ function dayLabel(key){
   } catch(e) { return key; }
 }
 
+const TIME_SCALE = { verbs:2 };   // écrire des verbes prend plus de temps : le bonus de vitesse se calcule sur la moitié du temps
 const DAY = todayKey();
 let saved = { day:DAY, scores:{}, pid:'', name:'' };
 try {
@@ -1280,7 +1455,7 @@ try {
     Object.keys(saved.scores).forEach(k => {
       const x = saved.scores[k];
       if(!x || typeof x.seconds !== 'number') { delete saved.scores[k]; return; }
-      if(typeof x.points !== 'number') x.points = calcPoints(x.firstTry || 0, x.seconds);
+      if(typeof x.points !== 'number') x.points = calcPoints(x.firstTry || 0, x.seconds, k);
     });
   }
 } catch(e) {}
@@ -1323,8 +1498,8 @@ let DB = null, CAN_WRITE = null;
 // ---------- Score : 5 points par question réussie du premier coup, multipliés par un bonus de vitesse ----------
 // Bonus : ×2 à 2 min 30 s ou moins, ×1 à 5 min, ×0,5 à 10 min ou plus (entre les deux, proportionnel).
 function speedBonus(sec){ return Math.min(2, Math.max(0.5, 300 / Math.max(1, sec))); }
-function calcPoints(firstTry, sec){ return Math.round(5 * firstTry * speedBonus(sec)); }
-function bonusStr(sec){ return '×' + dec(Math.round(speedBonus(sec) * 100) / 100, 2); }
+function calcPoints(firstTry, sec, id){ return Math.round(5 * firstTry * speedBonus(sec / (TIME_SCALE[id] || 1))); }
+function bonusStr(sec, id){ return '×' + dec(Math.round(speedBonus(sec / (TIME_SCALE[id] || 1)) * 100) / 100, 2); }
 
 const LS_KEY = 'math4-scores-v2';
 function localRows(){
@@ -1447,10 +1622,10 @@ function showMenu(){
       <div><div class="tlabel">Score total</div><div class="tval" id="pointsVal">${sumPoints()} pts</div></div>
       <div class="tcount">${n} sur ${modules.length} sections terminées</div></div>`;
   if(unlogged.length){
-    html += `<div class="banner"><strong>${all ? 'Les 4 sections sont terminées ! ' : ''}${unlogged.length === 1 ? 'Tu as 1 score à enregistrer.' : 'Tu as ' + unlogged.length + ' scores à enregistrer.'}</strong>
+    html += `<div class="banner"><strong>${all ? 'Les ' + modules.length + ' sections sont terminées ! ' : ''}${unlogged.length === 1 ? 'Tu as 1 score à enregistrer.' : 'Tu as ' + unlogged.length + ' scores à enregistrer.'}</strong>
       <div class="actions"><button class="btn" id="logAllBtn">Enregistrer ${unlogged.length === 1 ? 'mon score' : 'mes scores'}</button></div></div>`;
   } else if(all){
-    html += `<div class="banner"><strong>Les 4 sections sont terminées !</strong> Score total : ${sumPoints()} pts.
+    html += `<div class="banner"><strong>Les ${modules.length} sections sont terminées !</strong> Score total : ${sumPoints()} pts.
       <div class="actions"><button class="btn" id="seeLbBtn">Voir le classement</button></div></div>`;
   }
   html += `<div class="menu">`;
@@ -1488,9 +1663,46 @@ function showMenu(){
   });
 }
 
-function startModule(id){
+function showVerbIntro(){
+  const meta = modules.find(m => m.id === 'verbs');
+  mod = null;
+  stopTicker(); stopLb();
+  timebarEl.style.display = 'none';
+  trailEl.style.display = 'none';
+  setAccent(meta.color);
+  setCrumbs([CR_HOME(), CR_C2(), { label:meta.title }], false);
+  hTitle.textContent = meta.title;
+  hSub.textContent = 'Mathématique, 2e Cycle';
+  hBadge.textContent = '10 manches';
+  const cur = saved.verbTense && VERB_TENSES.some(t => t.id === saved.verbTense) ? saved.verbTense : 'pres';
+  viewEl.innerHTML = `<div class="card">
+    <div class="qnum">CHOISIS TON TEMPS DE VERBE</div>
+    <p class="qtext">Chaque jour, il y a 10 petits paragraphes à compléter. La première manche a une seule case, la dernière en a six. Choisis le temps, et les paragraphes du jour se mettent à jour.</p>
+    <label class="vsel"><span>Temps de verbe</span>
+      <select id="tenseSel" class="c1-sel">${VERB_TENSES.map(t => `<option value="${t.id}"${t.id === cur ? ' selected' : ''}>${t.label}</option>`).join('')}</select></label>
+    <div class="note" id="tenseRule"></div>
+    <div class="qnum" style="margin-top:18px">APERÇU DE LA MANCHE 1</div>
+    <div class="vpara vprev" id="vPrev"></div>
+    <div class="actions"><button class="btn" id="vStart">Commencer</button></div>
+  </div>
+  <div class="back"><button id="backBtn">Retour au menu</button></div>`;
+  function paint(){
+    const id = document.getElementById('tenseSel').value, t = verbTense(id);
+    document.getElementById('tenseRule').textContent = t.rule;
+    const q = buildQuestions('verbs', DAY, id)[0];
+    document.getElementById('vPrev').innerHTML = q.parts.map(x => x.t === 'text' ? x.v : '<span class="vb"><span class="vblank">' + '_'.repeat(8) + '</span> <span class="vinf">(' + x.lemma + ')</span></span>').join('');
+  }
+  document.getElementById('tenseSel').addEventListener('change', paint);
+  paint();
+  document.getElementById('vStart').addEventListener('click', () => startModule('verbs', document.getElementById('tenseSel').value));
+  document.getElementById('backBtn').addEventListener('click', showMenu);
+}
+
+function startModule(id, tense){
+  if(id === 'verbs' && !tense){ showVerbIntro(); return; }
   const meta = modules.find(m => m.id === id);
-  mod = { id:meta.id, color:meta.color, title:meta.title, questions:buildQuestions(id, DAY) };
+  if(id === 'verbs'){ saved.verbTense = tense; persist(); }
+  mod = { id:meta.id, color:meta.color, title:meta.title, tense:tense || null, questions:buildQuestions(id, DAY, tense) };
   idx = 0;
   firstTry = 0;
   stopLb();
@@ -1505,7 +1717,7 @@ function startModule(id){
   setCrumbs([CR_HOME(), CR_C2(), { label:mod.title }], true);
   hTitle.textContent = mod.title;
   hSub.textContent = 'Mathématique, 2e Cycle';
-  hBadge.textContent = mod.questions.length + ' questions';
+  hBadge.textContent = mod.questions.length + (id === 'verbs' ? ' manches' : ' questions');
   renderQuestion();
 }
 
@@ -1515,8 +1727,10 @@ function renderQuestion(){
   const isLast = idx === mod.questions.length - 1;
   let attempts = 0;
 
+  const isVerbs = q.type === 'verbs';
   let body = `<div class="card">
-    <div class="qnum">QUESTION ${idx + 1} SUR ${mod.questions.length}</div>
+    <div class="qnum">${isVerbs ? 'MANCHE' : 'QUESTION'} ${idx + 1} SUR ${mod.questions.length}${isVerbs ? ' · ' + q.nblanks + (q.nblanks > 1 ? ' CASES' : ' CASE') : ''}</div>
+    ${isVerbs ? `<div class="vchip">Temps : <b>${verbTense(q.tense).label}</b> <button type="button" class="linkbtn" id="chgTense">changer de temps</button></div>` : ''}
     ${q.visual ? `<div class="visual">${q.visual}</div>` : ''}
     <p class="qtext">${q.text}</p>`;
 
@@ -1524,6 +1738,9 @@ function renderQuestion(){
     body += `<div class="choices" id="choices">` +
       q.options.map((o, i) => `<button class="choice" data-i="${i}">${o}</button>`).join('') +
       `</div>`;
+  } else if(isVerbs){
+    body += `<div class="vpara" id="vpara">${verbPartsHTML(q)}</div>
+      <div class="actions"><button class="btn" id="submitBtn">Vérifier</button></div>`;
   } else if(q.type === 'clock'){
     body += `<div class="clockfields">
       <label class="cf"><span>Avant midi (le matin), en format 24 h</span><input type="text" id="answerInput" placeholder="${q.phs24[0]}" autocomplete="off"></label>
@@ -1544,13 +1761,15 @@ function renderQuestion(){
   const feedback = document.getElementById('feedback');
   const extra = document.getElementById('extra');
   document.getElementById('backBtn').addEventListener('click', () => leaveTo(showMenu));
+  const chg = document.getElementById('chgTense');
+  if(chg) chg.addEventListener('click', () => leaveTo(showVerbIntro));
 
   function success(){
     if(attempts === 0) firstTry++;
     feedback.className = 'feedback ok';
     feedback.textContent = attempts === 0 ? '✔ Bonne réponse, du premier coup !' : '✔ Bonne réponse ! Tu as persévéré.';
     extra.innerHTML = `<div class="note">${q.explain}</div>
-      <div class="actions"><button class="btn" id="nextBtn">${isLast ? 'Voir mes résultats' : 'Question suivante'}</button></div>`;
+      <div class="actions"><button class="btn" id="nextBtn">${isLast ? 'Voir mes résultats' : (isVerbs ? 'Manche suivante' : 'Question suivante')}</button></div>`;
     const nb = document.getElementById('nextBtn');
     nb.focus();
     nb.addEventListener('click', () => {
@@ -1563,7 +1782,14 @@ function renderQuestion(){
     attempts++;
     feedback.className = 'feedback no';
     const slip = q.type === 'clock' ? clockFeedback(q, raw.am, raw.pm) : null;
-    if(slip && attempts <= 2){
+    if(isVerbs){
+      const wrong = q.blanks.map((b, i) => i).filter(i => !checkVerbs(q, raw)[i]);
+      const diag = wrong.map(i => verbDiag(q, i, raw[i]));
+      let html = 'Pas encore. Corrige les cases en rouge.<br>' + diag.join('<br>');
+      if(attempts >= 2) html += '<br><br>Un coup de pouce : ' + q.hint + '<br>' + wrong.map(i => verbHint(q, i)).join('<br>');
+      feedback.innerHTML = html;
+      if(attempts >= 3) extra.innerHTML = '<div class="note">Les bonnes réponses : ' + wrong.map(i => 'case ' + (i + 1) + ' : <b>' + q.blanks[i].answer + '</b>').join(' · ') + '</div>';
+    } else if(slip && attempts <= 2){
       feedback.textContent = slip;
     } else if(attempts === 1){
       feedback.textContent = 'Pas tout à fait. Relis bien la question et essaie encore !';
@@ -1590,6 +1816,34 @@ function renderQuestion(){
         }
       });
     });
+  } else if(isVerbs){
+    const ins = Array.prototype.slice.call(document.querySelectorAll('#vpara .vin'));
+    const btn = document.getElementById('submitBtn');
+    ins[0].focus();
+    function submit(){
+      const vals = ins.map(i => i.value);
+      if(vals.every(v => v.trim() === '')){
+        feedback.className = 'feedback no';
+        feedback.textContent = 'Écris les verbes dans les cases avant de vérifier.';
+        return;
+      }
+      const ok = checkVerbs(q, vals);
+      ins.forEach((inp, i) => {
+        inp.classList.toggle('good', ok[i]); inp.classList.toggle('bad', !ok[i]);
+        if(ok[i]) inp.disabled = true;
+      });
+      if(ok.every(Boolean)){ btn.disabled = true; success(); return; }
+      failure(vals);
+      const firstBad = ins.filter((inp, i) => !ok[i])[0];
+      if(firstBad) firstBad.focus();
+    }
+    btn.addEventListener('click', submit);
+    ins.forEach((inp, k) => inp.addEventListener('keydown', e => {
+      if(e.key !== 'Enter') return;
+      e.preventDefault();
+      const next = ins.slice(k + 1).filter(x => !x.disabled)[0];
+      if(next) next.focus(); else submit();
+    }));
   } else {
     const input = document.getElementById('answerInput');
     const input2 = document.getElementById('answerInput2');
@@ -1667,7 +1921,7 @@ function renderFinal(){
   const wasPractice = practice;
   // Le score se calcule et se range seulement ici : la section est terminée à 100 %
   if(!wasPractice){
-    saved.scores[mod.id] = { firstTry:firstTry, total:total, seconds:secs, points:calcPoints(firstTry, secs), logged:false, shared:false };
+    saved.scores[mod.id] = { firstTry:firstTry, total:total, seconds:secs, points:calcPoints(firstTry, secs, mod.id), logged:false, shared:false };
     persist();
   }
   const rec = saved.scores[mod.id];
@@ -1687,9 +1941,9 @@ function renderFinal(){
     body = `<div class="score-pill">⏱ ${fmt(secs)} · pratique</div><p>Ton score et ton temps du jour pour cette section ne changent pas.</p>`;
   } else {
     body = `<div class="score-pill">⭐ ${rec.points} pts · ⏱ ${fmt(secs)}</div>
-       <p class="calc">5 pts × ${firstTry} réussies du premier coup = ${5 * firstTry} · bonus de vitesse ${bonusStr(secs)}</p>
+       <p class="calc">5 pts × ${firstTry} réussies du premier coup = ${5 * firstTry} · bonus de vitesse ${bonusStr(secs, mod.id)}${TIME_SCALE[mod.id] ? ' (temps doublé pour cette section)' : ''}</p>
        <p>Temps total : <strong>${fmt(totalDone())}</strong> · Score total : <strong>${sumPoints()} pts</strong> (${n} sur ${modules.length} sections).</p>
-       ${all ? '<p><strong>Les 4 sections sont terminées !</strong></p>' : ''}
+       ${all ? '<p><strong>Les ' + modules.length + ' sections sont terminées !</strong></p>' : ''}
        <div class="logbox" id="logBox"><p>Enregistre ton score au classement :</p>${nameRow('', 'Enregistrer mon score')}</div>`;
   }
   viewEl.innerHTML = `<div class="card final">
@@ -1745,7 +1999,7 @@ function showLogAll(cycle){
 }
 
 let lbTab = 'total';
-const SHORT = { exam:'Examen', time:'Heure', money:'Monnaie', fractions:'Fractions', mimi:'Mimi', dash:'Coccinelles' };
+const SHORT = { exam:'Examen', time:'Heure', money:'Monnaie', fractions:'Fractions', verbs:'Verbes', mimi:'Mimi', dash:'Coccinelles' };
 const C1_MODS = [ { id:'mimi', title:'Le chemin de Mimi' }, { id:'dash', title:'Course des coccinelles' } ];
 function showLeaderboard(cycle){
   cycle = cycle === 'c1' ? 'c1' : 'c2';
